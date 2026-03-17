@@ -7,8 +7,9 @@ Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@re
 ## Install
 
 ```bash
-# Install globally from GitHub
-npm install -g github:m2015agg/notionCLI
+# Clone, build, and install globally
+git clone https://github.com/m2015agg/notionCLI.git
+cd notionCLI && npm install && npm run build && npm install -g .
 
 # Run global setup (adds to ~/.claude/CLAUDE.md + shell profile)
 notion-cli install
