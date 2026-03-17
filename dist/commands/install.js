@@ -70,17 +70,16 @@ export function installCommand() {
                 writeFileSync(profilePath, `# notion-cli\n${exportLine}\n`);
                 results.push(`~/${profileName}: created with NOTION_API_KEY`);
             }
-            // Source the profile in current context hint
-            if (apiKey !== "your-api-key-here") {
-                results.push("");
-                results.push(`Run: source ~/${profileName}`);
-            }
         }
         process.stdout.write("\nnotion-cli install complete:\n");
         for (const r of results) {
             process.stdout.write(`  ${r}\n`);
         }
-        process.stdout.write("\n");
+        if (!opts.skipShell) {
+            const shell = process.env.SHELL || "/bin/bash";
+            const profileName = shell.includes("zsh") ? ".zshrc" : ".bashrc";
+            process.stdout.write(`\nTo activate in your current shell, run:\n\n  source ~/${profileName}\n\n`);
+        }
     });
 }
 //# sourceMappingURL=install.js.map
