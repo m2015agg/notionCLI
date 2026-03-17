@@ -21,7 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "link": "npm run build && npm link",
-    "prepare": "npx tsc",
+    "prepare": "node node_modules/typescript/bin/tsc",
     "postinstall": "node dist/index.js install --skip-shell 2>/dev/null || true",
     "prepublishOnly": "npm run build"
   },
