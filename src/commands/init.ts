@@ -10,10 +10,18 @@ export function initCommand(): Command {
       const cwd = process.cwd();
       const results: string[] = [];
 
-      // 1. Upsert into project CLAUDE.md
+      // 1. Upsert into project CLAUDE.md files
       const claudeMd = join(cwd, "CLAUDE.md");
       const claudeResult = upsertSection(claudeMd);
       results.push(`CLAUDE.md: ${claudeResult}`);
+
+      // Also update .claude/CLAUDE.md if it exists
+      const dotClaudeDir = join(cwd, ".claude");
+      const dotClaudeMd = join(dotClaudeDir, "CLAUDE.md");
+      if (existsSync(dotClaudeDir)) {
+        const dotResult = upsertSection(dotClaudeMd);
+        results.push(`.claude/CLAUDE.md: ${dotResult}`);
+      }
 
       // 2. .env
       const envPath = join(cwd, ".env");
