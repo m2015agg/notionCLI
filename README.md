@@ -4,38 +4,21 @@ A CLI wrapper for the Notion API, designed for LLM/AI agent consumption.
 
 Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969) — zero context overhead, composable via pipes, structured JSON output, clean exit codes.
 
-## Quick Start
+## Install
 
 ```bash
-# Install dependencies and build
-npm install && npm run build
+# Install globally from GitHub
+npm install -g github:m2015agg/notionCLI
 
-# Link globally
-npm link
+# Run global setup (adds to ~/.claude/CLAUDE.md + shell profile)
+notion-cli install
 
-# Set your Notion API key
-export NOTION_API_KEY="ntn_your-key-here"
+# Set your Notion API key (edit the placeholder added to ~/.bashrc or ~/.zshrc)
+# Then reload your shell:
+source ~/.bashrc  # or source ~/.zshrc
 
 # Verify it works
 notion-cli users me --json
-```
-
-## Setup
-
-### Per-Project (Recommended)
-
-Run inside any project directory to add notion-cli docs to your CLAUDE.md, create a `.env`, and update `.gitignore`:
-
-```bash
-notion-cli init
-```
-
-### Global
-
-Adds notion-cli documentation to `~/.claude/CLAUDE.md` and a `NOTION_API_KEY` placeholder to your shell profile:
-
-```bash
-notion-cli install
 ```
 
 ### Getting a Notion API Key
@@ -44,6 +27,32 @@ notion-cli install
 2. Create a new integration
 3. Copy the "Internal Integration Secret" (starts with `ntn_`)
 4. Share your Notion pages/databases with the integration
+
+## Setup
+
+### Per-Project
+
+Run inside any project directory to add notion-cli docs to your CLAUDE.md, create a `.env`, and update `.gitignore`:
+
+```bash
+notion-cli init
+```
+
+### Global (already done during install)
+
+Adds notion-cli documentation to `~/.claude/CLAUDE.md` and a `NOTION_API_KEY` placeholder to your shell profile:
+
+```bash
+notion-cli install
+```
+
+### Uninstall
+
+```bash
+notion-cli uninstall              # Remove from ~/.claude/CLAUDE.md
+notion-cli uninstall --remove-env # Also remove NOTION_API_KEY from shell profile
+npm uninstall -g notion-cli       # Remove the binary
+```
 
 ## Commands
 
