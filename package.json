@@ -1,6 +1,6 @@
 {
   "name": "@m2015agg/notion-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "CLI wrapper for the Notion API, designed for LLM/AI agent consumption",
   "license": "MIT",

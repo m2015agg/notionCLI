@@ -7,18 +7,24 @@ Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@re
 ## Install
 
 ```bash
-# Install globally from npm
+# 1. Install
 npm install -g @m2015agg/notion-cli
 
-# Run global setup (adds to ~/.claude/CLAUDE.md + shell profile)
+# 2. Set up (prompts for your API key, adds to shell profile + CLAUDE.md)
 notion-cli install
 
-# Set your Notion API key (edit the placeholder added to ~/.bashrc or ~/.zshrc)
-# Then reload your shell:
+# 3. Reload shell
 source ~/.bashrc  # or source ~/.zshrc
 
-# Verify it works
+# 4. Verify
 notion-cli users me --json
+```
+
+Or non-interactive:
+```bash
+npm install -g @m2015agg/notion-cli
+notion-cli install --api-key ntn_your-key-here
+source ~/.bashrc
 ```
 
 ### Getting a Notion API Key
