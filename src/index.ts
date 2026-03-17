@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { pagesCommand } from "./commands/pages/index.js";
 import { dbCommand } from "./commands/db/index.js";
 import { blocksCommand } from "./commands/blocks/index.js";
@@ -12,12 +15,15 @@ import { searchCommand } from "./commands/search.js";
 import { filesCommand } from "./commands/files/index.js";
 import { usersCommand } from "./commands/users/index.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
+
 const program = new Command();
 
 program
   .name("notion-cli")
   .description("CLI wrapper for the Notion API. Designed for LLM/AI agent consumption.")
-  .version("0.1.0")
+  .version(pkg.version)
   .option("--json", "Output as structured JSON (default when piped)");
 
 program.addCommand(pagesCommand());
