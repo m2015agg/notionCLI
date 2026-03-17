@@ -21,16 +21,17 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "link": "npm run build && npm link",
+    "prepare": "tsc",
     "postinstall": "node dist/index.js install --skip-shell 2>/dev/null || true",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@notionhq/client": "^5.13.0",
-    "commander": "^13.1.0"
+    "@types/node": "^22.0.0",
+    "commander": "^13.1.0",
+    "typescript": "^5.7.0"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }
 }
