@@ -1,0 +1,19 @@
+{
+  "eval_id": "workspace_overview",
+  "mode": "cli",
+  "run": 3,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "lists multiple workspace areas or sections",
+      "passed": false
+    },
+    {
+      "assertion": "provides a structured overview",
+      "passed": false
+    }
+  ],
+  "duration_ms": 88263
+}

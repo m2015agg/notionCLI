@@ -1,0 +1,19 @@
+{
+  "eval_id": "cross_reference",
+  "mode": "cli",
+  "run": 1,
+  "pass_rate": 0.5,
+  "passed": 1,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "finds architecture or API related pages",
+      "passed": true
+    },
+    {
+      "assertion": "lists at least 1 result",
+      "passed": false
+    }
+  ],
+  "duration_ms": 14261
+}

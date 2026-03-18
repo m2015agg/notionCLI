@@ -2,6 +2,6 @@
   "eval_id": "targeted_lookup",
   "run": 2,
   "mode": "without_skill",
-  "response": "The page is titled **\"#7 \ud83d\udfe1 Idempotency Key Support (requestId)\"**. The request ID mentioned is **`requestId`** \u2014 a client-supplied UUID sent on `POST /plans`.\n\nKey details from the page:\n- **Purpose**: Prevent duplicate plans from double-tap or retry issues\n- **Mechanism**: Client sends a UUID `requestId` on `POST /plans`; if a plan with that `requestId` already exists, the server returns the existing plan (HTTP 200) instead of creating a duplicate (201)\n- **Status**: Finalized, on branch `implement-plan-wizard-api` / PR #156",
-  "duration_ms": 19684
+  "response": "The page is titled **#7 \ud83d\udfe1 Idempotency Key Support (requestId)**. Here are the key details:\n\n**Request ID:** `requestId` \u2014 a **UUID** sent by the client on `POST /plans`.\n\nThe feature prevents duplicate plans by checking if a plan with that `requestId` already exists. If so, it returns the existing plan (200) instead of creating a new one (201). This guards against double-tap and retry issues.\n\nThe tasks listed:\n- Accept `requestId` (UUID) on `POST /plans`\n- Schema migration: add `request_id` column with unique index\n- Duplicate `requestId` \u2192 return existing plan (200, not 201)\n- Test: same `requestId` twice \u2192 same plan returned\n\nStatus: **Finalized**, on branch `implement-plan-wizard-api` (PR #156).",
+  "duration_ms": 33497
 }

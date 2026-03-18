@@ -2,6 +2,6 @@
   "eval_id": "targeted_lookup",
   "run": 3,
   "mode": "with_skill",
-  "response": "The request ID mentioned in the **Idempotency Key Support (requestId)** Notion page is:\n\n**`8c1e1a50-7c4b-47d9-a366-61ac8c296563`**\n\nThis is the `request_id` from the API response when fetching that page's content.",
-  "duration_ms": 15109
+  "response": "The page is titled **\"#7 Idempotency Key Support (requestId)\"**.\n\nThe request ID mentioned is **`requestId`** \u2014 it's a UUID field that clients send on `POST /plans`. The feature prevents duplicate plans by returning the existing plan (200) if the same `requestId` is submitted twice.",
+  "duration_ms": 12291
 }

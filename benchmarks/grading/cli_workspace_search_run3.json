@@ -1,0 +1,19 @@
+{
+  "eval_id": "workspace_search",
+  "mode": "cli",
+  "run": 3,
+  "pass_rate": 1.0,
+  "passed": 2,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "mentions Support Docs or Support AI",
+      "passed": true
+    },
+    {
+      "assertion": "returns at least 2 results",
+      "passed": true
+    }
+  ],
+  "duration_ms": 8770
+}

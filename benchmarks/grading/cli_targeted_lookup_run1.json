@@ -1,0 +1,19 @@
+{
+  "eval_id": "targeted_lookup",
+  "mode": "cli",
+  "run": 1,
+  "pass_rate": 1.0,
+  "passed": 2,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "finds the Idempotency Key Support page",
+      "passed": true
+    },
+    {
+      "assertion": "mentions requestId or request ID",
+      "passed": true
+    }
+  ],
+  "duration_ms": 11242
+}

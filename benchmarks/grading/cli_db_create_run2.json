@@ -1,0 +1,23 @@
+{
+  "eval_id": "db_create",
+  "mode": "cli",
+  "run": 2,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 3,
+  "details": [
+    {
+      "assertion": "creates a database with the correct schema",
+      "passed": false
+    },
+    {
+      "assertion": "database has Name, Status, and Priority columns",
+      "passed": false
+    },
+    {
+      "assertion": "archives or deletes the test database",
+      "passed": false
+    }
+  ],
+  "duration_ms": 43788
+}

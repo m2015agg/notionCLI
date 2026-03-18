@@ -1,0 +1,23 @@
+{
+  "eval_id": "page_create",
+  "mode": "cli",
+  "run": 3,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 3,
+  "details": [
+    {
+      "assertion": "creates a page with the correct title",
+      "passed": false
+    },
+    {
+      "assertion": "confirms creation was successful",
+      "passed": false
+    },
+    {
+      "assertion": "archives or deletes the test page",
+      "passed": false
+    }
+  ],
+  "duration_ms": 39223
+}

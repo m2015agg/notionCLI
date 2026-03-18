@@ -1,0 +1,19 @@
+{
+  "eval_id": "workspace_search",
+  "mode": "mcp",
+  "run": 3,
+  "pass_rate": 0.5,
+  "passed": 1,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "mentions Support Docs or Support AI",
+      "passed": false
+    },
+    {
+      "assertion": "returns at least 2 results",
+      "passed": true
+    }
+  ],
+  "duration_ms": 22438
+}

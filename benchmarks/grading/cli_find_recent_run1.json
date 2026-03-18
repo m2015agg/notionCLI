@@ -1,0 +1,19 @@
+{
+  "eval_id": "find_recent",
+  "mode": "cli",
+  "run": 1,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "finds planning-related pages",
+      "passed": false
+    },
+    {
+      "assertion": "lists page names",
+      "passed": false
+    }
+  ],
+  "duration_ms": 15522
+}

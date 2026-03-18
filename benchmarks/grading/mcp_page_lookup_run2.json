@@ -1,0 +1,19 @@
+{
+  "eval_id": "page_lookup",
+  "mode": "mcp",
+  "run": 2,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "finds the Support AI Console page",
+      "passed": false
+    },
+    {
+      "assertion": "describes its purpose or content",
+      "passed": false
+    }
+  ],
+  "duration_ms": 42332
+}

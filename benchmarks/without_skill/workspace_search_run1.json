@@ -2,6 +2,6 @@
   "eval_id": "workspace_search",
   "run": 1,
   "mode": "without_skill",
-  "response": "Here are the pages found related to **Support**:\n\n**Direct matches:**\n1. **Support Docs** \u2014 last edited 2026-03-17\n2. **Support AI Console** \u2014 last edited 2026-03-17\n3. **#7 \ud83d\udfe1 Idempotency Key Support (requestId)** \u2014 last edited 2026-02-27\n\nThe remaining results are looser semantic matches from the workspace \u2014 pages like *Home*, *Dev Process*, *Data Model*, *Entitlements & Payments*, etc. that likely mention \"support\" in their content but aren't primarily about it.\n\nWould you like me to fetch the content of any of these pages?",
-  "duration_ms": 14373
+  "response": "Here are the pages I found related to **\"Support\"** across both searches:\n\n**Directly Support-related:**\n- `#7 \ud83d\udfe1 Idempotency Key Support (requestId)` \u2014 a ticket/task page about adding requestId support\n\n**Broader \"Support AI\" context:**\n- `AI Content Quality Improvements`\n- `Bible AI V2 Architecture Overview`\n- `Bible AI V2 Pipeline Flow`\n- `Ask LYTE | An AI with a Biblical worldview`\n- `Backend Claude Code Architecture - Sub-Agents & Skills Implementation Plan`\n- `V2 Deployment & Operations`\n\nThe only page with \"Support\" literally in the title is **\"#7 \ud83d\udfe1 Idempotency Key Support (requestId)\"**. The workspace search is doing semantic matching, so it's pulling in AI-related pages broadly.\n\nWould you like me to fetch the content of any of these pages, or search with a more specific query (e.g., \"Support AI Console\", \"customer support\", \"support channel\")?",
+  "duration_ms": 30013
 }

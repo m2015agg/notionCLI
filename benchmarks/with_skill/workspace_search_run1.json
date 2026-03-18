@@ -2,6 +2,6 @@
   "eval_id": "workspace_search",
   "run": 1,
   "mode": "with_skill",
-  "response": "Found 3 pages related to 'Support':\n\n1. **Support Docs** (\ud83d\udccb)\n2. **Support AI Console** (\ud83e\udd16)\n3. **#7 \ud83d\udfe1 Idempotency Key Support (requestId)**",
-  "duration_ms": 20710
+  "response": "Found 3 pages related to 'Support':\n\n1. **Support Docs** \u2014 top-level page under Home\n2. **Support AI Console** \u2014 nested under Home \u2192 Support Docs\n3. **#7 \ud83d\udfe1 Idempotency Key Support (requestId)** \u2014 standalone page (likely a task/ticket)",
+  "duration_ms": 9271
 }

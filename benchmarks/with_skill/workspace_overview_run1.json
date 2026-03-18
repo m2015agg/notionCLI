@@ -3,5 +3,5 @@
   "run": 1,
   "mode": "with_skill",
   "response": "Error: Reached max turns (10)",
-  "duration_ms": 50306
+  "duration_ms": 41877
 }

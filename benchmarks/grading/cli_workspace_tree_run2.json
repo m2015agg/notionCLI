@@ -1,0 +1,19 @@
+{
+  "eval_id": "workspace_tree",
+  "mode": "cli",
+  "run": 2,
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "shows workspace structure",
+      "passed": false
+    },
+    {
+      "assertion": "shows parent-child relationships or mentions hierarchy",
+      "passed": false
+    }
+  ],
+  "duration_ms": 36498
+}

@@ -1,0 +1,19 @@
+{
+  "eval_id": "page_lookup",
+  "mode": "cli",
+  "run": 2,
+  "pass_rate": 0.5,
+  "passed": 1,
+  "total": 2,
+  "details": [
+    {
+      "assertion": "finds the Support AI Console page",
+      "passed": true
+    },
+    {
+      "assertion": "describes its purpose or content",
+      "passed": false
+    }
+  ],
+  "duration_ms": 18770
+}
