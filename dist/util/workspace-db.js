@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS pages (
   url TEXT,
   icon TEXT,
   last_edited TEXT,
-  created TEXT
+  created TEXT,
+  summary TEXT
 );
 
 CREATE TABLE IF NOT EXISTS databases (
@@ -23,7 +24,8 @@ CREATE TABLE IF NOT EXISTS databases (
   url TEXT,
   icon TEXT,
   last_edited TEXT,
-  row_count INTEGER
+  row_count INTEGER,
+  schema_json TEXT
 );
 
 CREATE TABLE IF NOT EXISTS db_properties (
@@ -76,23 +78,24 @@ export function getMetadata(db, key) {
     return row?.value;
 }
 export function insertPages(db, pages) {
-    const insert = db.prepare("INSERT OR REPLACE INTO pages (id, title, type, parent_type, parent_id, url, icon, last_edited, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    const insert = db.prepare("INSERT OR REPLACE INTO pages (id, title, type, parent_type, parent_id, url, icon, last_edited, created, summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     const insertFts = db.prepare("INSERT INTO workspace_fts (name, type, parent, detail) VALUES (?, ?, ?, ?)");
     const tx = db.transaction(() => {
         for (const p of pages) {
-            insert.run(p.id, p.title, p.type, p.parent_type, p.parent_id, p.url, p.icon, p.last_edited, p.created);
-            insertFts.run(p.title, "page", p.parent_id, `${p.type} ${p.icon || ""}`);
+            insert.run(p.id, p.title, p.type, p.parent_type, p.parent_id, p.url, p.icon, p.last_edited, p.created, p.summary);
+            const detail = [p.type, p.icon || "", p.summary || ""].filter(Boolean).join(" ");
+            insertFts.run(p.title, "page", p.parent_id, detail);
         }
     });
     tx();
 }
 export function insertDatabases(db, databases, properties) {
-    const insertDb = db.prepare("INSERT OR REPLACE INTO databases (id, title, parent_type, parent_id, url, icon, last_edited, row_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    const insertDb = db.prepare("INSERT OR REPLACE INTO databases (id, title, parent_type, parent_id, url, icon, last_edited, row_count, schema_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     const insertProp = db.prepare("INSERT INTO db_properties (database_id, name, type, config) VALUES (?, ?, ?, ?)");
     const insertFts = db.prepare("INSERT INTO workspace_fts (name, type, parent, detail) VALUES (?, ?, ?, ?)");
     const tx = db.transaction(() => {
         for (const d of databases) {
-            insertDb.run(d.id, d.title, d.parent_type, d.parent_id, d.url, d.icon, d.last_edited, d.row_count);
+            insertDb.run(d.id, d.title, d.parent_type, d.parent_id, d.url, d.icon, d.last_edited, d.row_count, d.schema_json);
             insertFts.run(d.title, "database", d.parent_id, `${d.row_count} rows ${d.icon || ""}`);
         }
         for (const p of properties) {
@@ -139,5 +142,77 @@ export function getPage(db, id) {
 }
 export function getDatabase(db, id) {
     return db.prepare("SELECT * FROM databases WHERE id = ?").get(id);
+}
+export function findDatabaseByQuery(db, query) {
+    // Try exact ID first
+    const exact = getDatabase(db, query);
+    if (exact)
+        return exact;
+    // Try partial ID or title match
+    const allDbs = getAllDatabases(db);
+    return allDbs.find((d) => d.id.includes(query) || d.title.toLowerCase().includes(query.toLowerCase()));
+}
+export function buildTree(db) {
+    const pages = getAllPages(db);
+    const databases = getAllDatabases(db);
+    const nodeMap = new Map();
+    const roots = [];
+    // Create nodes for all pages and databases
+    for (const p of pages) {
+        nodeMap.set(p.id, { id: p.id, title: p.title, icon: p.icon, type: "page", children: [] });
+    }
+    for (const d of databases) {
+        nodeMap.set(d.id, { id: d.id, title: d.title, icon: d.icon, type: "database", children: [] });
+    }
+    // Build parent-child relationships
+    for (const p of pages) {
+        const node = nodeMap.get(p.id);
+        const parent = nodeMap.get(p.parent_id);
+        if (parent) {
+            parent.children.push(node);
+        }
+        else {
+            roots.push(node);
+        }
+    }
+    for (const d of databases) {
+        const node = nodeMap.get(d.id);
+        const parent = nodeMap.get(d.parent_id);
+        if (parent) {
+            parent.children.push(node);
+        }
+        else {
+            roots.push(node);
+        }
+    }
+    return roots;
+}
+export function getBreadcrumb(db, itemId) {
+    const pages = new Map();
+    const databases = new Map();
+    for (const p of getAllPages(db))
+        pages.set(p.id, p);
+    for (const d of getAllDatabases(db))
+        databases.set(d.id, d);
+    const parts = [];
+    let currentId = itemId;
+    const visited = new Set();
+    while (currentId && !visited.has(currentId)) {
+        visited.add(currentId);
+        const page = pages.get(currentId);
+        const database = databases.get(currentId);
+        if (page) {
+            parts.unshift(`${page.icon || "\u{1F4CB}"} ${page.title}`);
+            currentId = page.parent_id;
+        }
+        else if (database) {
+            parts.unshift(`${database.icon || "\u{1F4CA}"} ${database.title}`);
+            currentId = database.parent_id;
+        }
+        else {
+            break;
+        }
+    }
+    return parts.join(" \u2192 ");
 }
 //# sourceMappingURL=workspace-db.js.map

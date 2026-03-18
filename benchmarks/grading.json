@@ -1,0 +1,758 @@
+[
+  {
+    "eval_id": "cross_reference",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 13302,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Excellent response with well-organized tables, relevant results in both categories, and a helpful follow-up offer",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response found 9 architecture pages and 9 API pages, clearly meeting this criterion"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 18 total results across two categories"
+      }
+    ]
+  },
+  {
+    "eval_id": "cross_reference",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 9663,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly finds and lists relevant architecture and API pages with good organization",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response lists multiple architecture pages (9) and API pages (9) with relevant titles"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 18 total results across both categories"
+      }
+    ]
+  },
+  {
+    "eval_id": "cross_reference",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 12234,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response correctly finds and lists architecture and API pages from Notion with clear tabular formatting",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response finds both architecture pages (9 results) and API related pages (9 results)"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 18 total results across both searches"
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 20061,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response successfully finds and lists planning-related pages with well-organized categories and clear page names",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "Response returns 50 matches of planning-related pages across multiple categories including Plan Wizard, Feature Tickets, Kids Plans, UI/UX, etc."
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "Response explicitly lists page names such as 'Plan Creation Wizard', 'Plan Wizard Prompt Tuning', 'Kids Plans', 'Plans MVP', and many others with clear formatting"
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 16655,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly satisfies both assertions by finding and listing planning-related page names with useful categorization.",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "The response lists 50 matches of planning-related pages across multiple categories"
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "The response explicitly names numerous pages such as 'Release Planning', 'Plan Wizard Prompt Tuning', 'Kids Plans', etc."
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 17749,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response successfully finds and lists planning-related Notion pages with clear organization and page names.",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "The response returns 50 matches of planning-related Notion pages organized into categories"
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "The response explicitly lists page names such as 'Plan Wizard \u2014 API Server Epic', 'Plans MVP', 'Kids Plans', etc."
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 50885,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass; response accurately identifies and thoroughly describes the Support AI Console page.",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response presents detailed, structured information about the Support AI Console including its status, branch name, architecture, and TODOs \u2014 indicating it successfully located the relevant page/source."
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "The response clearly describes the purpose as 'an admin-only AI assistant built into the monitoring dashboard for querying and managing the BibleAI system' and elaborates on architecture, capabilities, and design choices."
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 34684,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response accurately finds and comprehensively describes the Support AI Console's purpose, architecture, and status.",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response presents detailed information about the Support AI Console, indicating it successfully found the relevant page or content."
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "The response thoroughly describes the Support AI Console's purpose (admin-only AI assistant for managing BibleAI system via text/voice), architecture (NanoClaw, Deepgram), current status, and open TODOs."
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 89256,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response accurately finds the Support AI Console and provides a detailed, well-structured description of its purpose, architecture, and content",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response clearly located the Support AI Console page and presents structured information about it"
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "The response thoroughly describes the purpose (admin-only AI assistant for querying/managing BibleAI system), architecture, data flow, design choices, and capabilities"
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 40179,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass cleanly; response accurately identifies the page and mentions requestId/request_id.",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": true,
+        "reason": "The response explicitly identifies the page '#7 \ud83d\udfe1 Idempotency Key Support (requestId)'"
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": true,
+        "reason": "The response mentions both 'requestId' and 'request_id' multiple times"
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 40516,
+    "pass_rate": 0.0,
+    "quality": 1,
+    "summary": "Response failed entirely with a max turns error, no assertions could be satisfied",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": false,
+        "reason": "The response is an error message indicating max turns reached, no page was found"
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": false,
+        "reason": "The response contains only an error message, no mention of requestId or request ID"
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 15109,
+    "pass_rate": 1.0,
+    "quality": 3,
+    "summary": "Both assertions pass; response identifies the page and mentions requestId, though the UUID provided may be fabricated without evidence.",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": true,
+        "reason": "The response explicitly references the 'Idempotency Key Support (requestId)' Notion page by name."
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": true,
+        "reason": "The response mentions both 'requestId' in the page title and 'request_id' in the explanation."
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 50306,
+    "pass_rate": 0.0,
+    "quality": 1,
+    "summary": "Response is a system error message with no useful content",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": false,
+        "reason": "The response is an error message 'Error: Reached max turns (10)' with no workspace areas or sections listed"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": false,
+        "reason": "The response is an error message with no structured content whatsoever"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 39485,
+    "pass_rate": 0.0,
+    "quality": 1,
+    "summary": "Response is a bare error message with no content, failing all assertions",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": false,
+        "reason": "The response is an error message 'Error: Reached max turns (10)' with no workspace areas or sections listed"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": false,
+        "reason": "The response is an error message with no structured overview whatsoever"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 52896,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response fully satisfies both assertions with a comprehensive, well-organized workspace overview",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": true,
+        "reason": "Response lists Core Product Areas, Backend & Infrastructure, Dev Process & Tooling, Product & Business, and Notable Hubs as distinct sections"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": true,
+        "reason": "Response uses markdown headers, sub-sections, bullet points, and a summary statement to provide a well-structured hierarchical overview"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 1,
+    "mode": "with_skill",
+    "duration_ms": 20710,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly passes both assertions, listing 3 relevant results including both Support Docs and Support AI Console",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response explicitly lists both 'Support Docs' and 'Support AI Console' as results 1 and 2"
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 3 results, which is >= 2"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 2,
+    "mode": "with_skill",
+    "duration_ms": 8874,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass cleanly; response lists 3 relevant pages including Support Docs and Support AI Console.",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response mentions both 'Support Docs' and 'Support AI Console'"
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 3 results"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 3,
+    "mode": "with_skill",
+    "duration_ms": 7352,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response correctly identifies Support Docs and Support AI Console among 3 results, passing both assertions.",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response mentions both 'Support Docs' and 'Support AI Console'"
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 3 results"
+      }
+    ]
+  },
+  {
+    "eval_id": "cross_reference",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 30415,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly found and listed relevant architecture and API pages with IDs and metadata",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response found multiple architecture pages (Architecture, Architecture Decision Record) and API pages (API Reference)"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 4 results total across both searches"
+      }
+    ]
+  },
+  {
+    "eval_id": "cross_reference",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 30650,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly finds and presents relevant architecture and API pages with good organization and context.",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response found multiple architecture pages (Architecture, Architecture Decision Record) and multiple API pages (API Reference, Home Church API Feed, Plan Wizard API Epic, etc.)"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 8 results across architecture and API categories"
+      }
+    ]
+  },
+  {
+    "eval_id": "cross_reference",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 27206,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly passes both assertions with well-organized tables of architecture and API pages",
+    "assertions": [
+      {
+        "assertion": "finds architecture or API related pages",
+        "pass": true,
+        "reason": "Response lists multiple architecture pages (Architecture, BibleAI Infrastructure Architecture, V2 Architecture, etc.) and API pages (API Reference, Chat API, etc.)"
+      },
+      {
+        "assertion": "lists at least 1 result",
+        "pass": true,
+        "reason": "Response lists 16+ results across both architecture and API categories"
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 32073,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response correctly finds and lists planning-related Notion pages with names, dates, and organized groupings.",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "The response successfully identifies and returns planning-related pages from the Notion workspace cache"
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "The response lists page names clearly in formatted tables with 18 plan-related pages shown"
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 29133,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response fully satisfies both assertions with well-organized, named planning pages including dates and brief descriptions",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "Response lists 15 planning-related Notion pages across multiple categories including product specs, UI/UX features, and technical docs"
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "All 15 pages are listed by name with dates, e.g. 'Plans', 'Plans MVP', 'Plan Creation Wizard', etc."
+      }
+    ]
+  },
+  {
+    "eval_id": "find_recent",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 24697,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response thoroughly finds and lists planning pages with organized categories, dates, and helpful context",
+    "assertions": [
+      {
+        "assertion": "finds planning-related pages",
+        "pass": true,
+        "reason": "The response found and categorized multiple planning-related pages from Notion workspace"
+      },
+      {
+        "assertion": "lists page names",
+        "pass": true,
+        "reason": "Page names are clearly listed in organized tables with titles visible"
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 37379,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass; response accurately locates and thoroughly describes the Support AI Console page",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response presents detailed information about the Support AI Console, indicating it was found"
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "Describes it as an admin-only AI assistant for the monitoring dashboard with text/voice interface to query BibleAI system components"
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 36861,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response accurately finds and comprehensively describes the Support AI Console page with detailed purpose, architecture, and current status",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response clearly identifies and presents the Support AI Console page with detailed information about it"
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "The response thoroughly describes the purpose (admin-only AI assistant for querying and managing BibleAI system) and content (architecture, capabilities, design choices, known TODOs)"
+      }
+    ]
+  },
+  {
+    "eval_id": "page_lookup",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 28788,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass; response is detailed and well-structured with accurate content about the Support AI Console.",
+    "assertions": [
+      {
+        "assertion": "finds the Support AI Console page",
+        "pass": true,
+        "reason": "The response is titled 'Support AI Console' and clearly references the relevant page/feature with branch info and status."
+      },
+      {
+        "assertion": "describes its purpose or content",
+        "pass": true,
+        "reason": "Extensively describes purpose (admin-only AI assistant for BibleAI system management), architecture (React frontend, NanoClaw, Voice Server), capabilities (database, workers, system), and design decisions."
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 24116,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass; the response accurately identifies the Idempotency Key Support page and clearly mentions requestId.",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": true,
+        "reason": "The response correctly identifies the page titled '#7 \ud83d\udfe1 Idempotency Key Support (requestId)'"
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": true,
+        "reason": "The response explicitly mentions 'requestId' multiple times, describing it as a client-supplied UUID"
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 19684,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response correctly identifies the Idempotency Key Support page and clearly mentions requestId with full context.",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": true,
+        "reason": "The response explicitly identifies the page titled '#7 \ud83d\udfe1 Idempotency Key Support (requestId)'"
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": true,
+        "reason": "The response mentions both 'requestId' and 'request ID' multiple times"
+      }
+    ]
+  },
+  {
+    "eval_id": "targeted_lookup",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 20868,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response correctly identifies the Idempotency Key Support page and thoroughly explains the requestId concept.",
+    "assertions": [
+      {
+        "assertion": "finds the Idempotency Key Support page",
+        "pass": true,
+        "reason": "Response explicitly references the page titled '#7 \ud83d\udfe1 Idempotency Key Support (requestId)'"
+      },
+      {
+        "assertion": "mentions requestId or request ID",
+        "pass": true,
+        "reason": "Response mentions 'requestId' multiple times as a UUID field name"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 54802,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Both assertions pass; the response provides a well-structured overview with clearly delineated workspace sections.",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": true,
+        "reason": "The response lists 5 distinct workspace areas: Frontend, Backend, Marketing, Company, and Support, plus additional active work areas"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": true,
+        "reason": "The response uses headers, bullet points, and organized sections to present a clear structured overview of the workspace"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 47085,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response fully satisfies both assertions with a well-organized, detailed workspace overview",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": true,
+        "reason": "The response lists 5 main areas: Frontend, Backend, Marketing, Company, and Support, each with multiple sub-items"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": true,
+        "reason": "The response uses headers, bullet points, and organized sections to present a clear structured overview of the Notion workspace"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_overview",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 42090,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Well-structured response that clearly lists multiple workspace areas with detailed sub-sections in an organized format",
+    "assertions": [
+      {
+        "assertion": "lists multiple workspace areas or sections",
+        "pass": true,
+        "reason": "The response lists 5 distinct areas: Frontend, Backend, Marketing, Company, and Support, each with multiple sub-items"
+      },
+      {
+        "assertion": "provides a structured overview",
+        "pass": true,
+        "reason": "The response uses headers, bullet points, and a clear hierarchical structure to organize the workspace overview"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 1,
+    "mode": "without_skill",
+    "duration_ms": 14373,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly identifies both required items and returns well more than 2 results with helpful context.",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response explicitly lists both 'Support Docs' and 'Support AI Console' as direct matches"
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 3 direct matches plus additional semantic matches, well over 2 results"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 2,
+    "mode": "without_skill",
+    "duration_ms": 14448,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response clearly satisfies both assertions, returning multiple relevant results including Support Docs and Support AI Console at the top.",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response explicitly mentions both 'Support Docs' and 'Support AI Console' as the top two results"
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 15 results total, well above the minimum of 2"
+      }
+    ]
+  },
+  {
+    "eval_id": "workspace_search",
+    "run": 3,
+    "mode": "without_skill",
+    "duration_ms": 21279,
+    "pass_rate": 1.0,
+    "quality": 5,
+    "summary": "Response fully satisfies both assertions with 15 results including Support Docs and Support AI Console prominently featured.",
+    "assertions": [
+      {
+        "assertion": "mentions Support Docs or Support AI",
+        "pass": true,
+        "reason": "Response explicitly mentions both 'Support Docs' and 'Support AI Console' as results 1 and 2 in the table, and highlights them again at the end."
+      },
+      {
+        "assertion": "returns at least 2 results",
+        "pass": true,
+        "reason": "Response returns 15 results in the table, well exceeding the minimum of 2."
+      }
+    ]
+  }
+]

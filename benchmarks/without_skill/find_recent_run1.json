@@ -1,0 +1,7 @@
+{
+  "eval_id": "find_recent",
+  "run": 1,
+  "mode": "without_skill",
+  "response": "Here are the planning-related pages found in your Notion workspace (from the local cache, sorted by recency):\n\n**Active/Recent (March 2026)**\n\n| Page | Last Edited |\n|------|-------------|\n| Fix Plan Output Quality (Round 3) | 2026-03-18 |\n| Plan Block Recipes \u2014 Block List Review (Matt + Kyle) | 2026-03-18 |\n| plan updates 3/16 | 2026-03-16 |\n| New Plan Feedback | 2026-03-11 |\n| basic onboarding for plans | 2026-03-11 |\n| plan block content cards UI | 2026-03-11 |\n| New Plan Recipes & Prompts | 2026-03-11 |\n| Plans | 2026-03-10 |\n| Plan RAG Feedback | 2026-03-10 |\n| Add \"chat with plan\" modal | 2026-03-05 |\n| Add devotional plans | 2026-03-04 |\n| Plan card tabs | 2026-03-03 |\n| Plan bulk edit | 2026-03-02 |\n| Plan Creation Archive | 2026-03-02 |\n| complete plan | 2026-03-01 |\n\n**Older Epics/Specs (Feb 2026)**\n\n| Page | Last Edited |\n|------|-------------|\n| \ud83d\udccb Plan Wizard \u2014 API Server Epic (Master Tracker) | 2026-02-27 |\n| #3 \ud83d\udd34 Preview Endpoint \u2192 Return Plan Outline | 2026-02-27 |\n| #5 \ud83d\udfe1 POST /plans/questions \u2014 Separate Questions Endpoint | 2026-02-27 |\n\n**18 plan-related pages total.** The most active right now are the output quality fix and block recipes review (both edited today). Would you like me to open any of these pages?",
+  "duration_ms": 32073
+}

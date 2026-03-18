@@ -1,0 +1,7 @@
+{
+  "eval_id": "cross_reference",
+  "run": 1,
+  "mode": "without_skill",
+  "response": "Here's what I found across both searches:\n\n---\n\n**\"architecture\" results:**\n\n| # | Title | ID | Last Edited |\n|---|-------|----|-------------|\n| 1 | \ud83c\udfd7\ufe0f Architecture | `3262dbd5-708f-81b2-ad04-de9c6053c925` | 2026-03-17 |\n| 2 | \ud83d\udcdd Architecture Decision Record: CLI vs MCP | `3262dbd5-708f-812b-827a-ebc4006ce447` | 2026-03-17 |\n\n---\n\n**\"API\" results:**\n\n| # | Title | ID | Last Edited |\n|---|-------|----|-------------|\n| 1 | \ud83d\udce1 API Reference | `3262dbd5-708f-81b9-9f3c-d1081ecc2c29` | 2026-03-17 |\n| 2 | *(database entry, no clear title \u2014 DB item)* | `30b2dbd5-708f-8037-8611-de40a8555c2e` | 2026-03-11 |\n\n---\n\n**Summary:**\n\n- **Architecture** \u2014 a standalone page, likely a top-level docs section\n- **Architecture Decision Record: CLI vs MCP** \u2014 an ADR doc (child of another page, created 2026-03-17)\n- **API Reference** \u2014 a page under the same parent as \"Architecture\" (page `23d2dbd5-708f-80bb-a07e-e40f57f23628`)\n- One unidentified database row from mid-March with \"API\" in its content\n\nWant me to fetch and read the content of any of these pages?",
+  "duration_ms": 30415
+}

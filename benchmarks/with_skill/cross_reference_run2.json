@@ -1,0 +1,7 @@
+{
+  "eval_id": "cross_reference",
+  "run": 2,
+  "mode": "with_skill",
+  "response": "Here's what I found across both searches:\n\n**Architecture (9 results)**\n- Architecture *(general page)*\n- Nebo Network Architecture\n- V2 Detector Architecture\n- BibleAI Infrastructure Architecture\n- Kids Plans MVP - Backend Architecture\n- Bible AI V2 Architecture Overview\n- Architecture Decision Record: CLI vs MCP\n- Source View Architecture (Clickable Source Links)\n- Backend Claude Code Architecture - Sub-Agents & Skills Implementation Plan\n\n**API (9 results)**\n- API Reference\n- api-doc-gen\n- Supabase API Functions\n- Home Church API Feed\n- Chat API Performance Phase 1\n- Plan Wizard \u2014 API Server Epic (Master Tracker)\n- Chat API entitlements enforcement (limits + usage + errors)\n- Add Chat API log monitoring endpoints for agents\n- Implement Caching to reduce API calls and loading time\n\nWant me to pull the full content of any of these pages?",
+  "duration_ms": 9663
+}

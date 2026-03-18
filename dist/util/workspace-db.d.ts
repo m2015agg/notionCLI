@@ -14,6 +14,7 @@ export interface PageRow {
     icon: string | null;
     last_edited: string;
     created: string;
+    summary: string | null;
 }
 export interface DatabaseRow {
     id: string;
@@ -24,6 +25,7 @@ export interface DatabaseRow {
     icon: string | null;
     last_edited: string;
     row_count: number;
+    schema_json: string | null;
 }
 export interface DbPropertyRow {
     database_id: string;
@@ -46,3 +48,13 @@ export declare function getAllDatabases(db: Database.Database): DatabaseRow[];
 export declare function getDbProperties(db: Database.Database, databaseId: string): DbPropertyRow[];
 export declare function getPage(db: Database.Database, id: string): PageRow | undefined;
 export declare function getDatabase(db: Database.Database, id: string): DatabaseRow | undefined;
+export declare function findDatabaseByQuery(db: Database.Database, query: string): DatabaseRow | undefined;
+export interface TreeNode {
+    id: string;
+    title: string;
+    icon: string | null;
+    type: "page" | "database";
+    children: TreeNode[];
+}
+export declare function buildTree(db: Database.Database): TreeNode[];
+export declare function getBreadcrumb(db: Database.Database, itemId: string): string;

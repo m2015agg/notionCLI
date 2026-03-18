@@ -1,0 +1,7 @@
+{
+  "eval_id": "workspace_search",
+  "run": 3,
+  "mode": "without_skill",
+  "response": "Here are the Notion pages found related to **\"Support\"**:\n\n| # | Page Title | Last Modified |\n|---|-----------|---------------|\n| 1 | **Support Docs** | 2026-03-17 |\n| 2 | **Support AI Console** | 2026-03-17 |\n| 3 | Home | 2026-03-17 |\n| 4 | Adding Skills Process Outline | 2026-02-03 |\n| 5 | V2 Deployment & Operations | 2025-11-07 |\n| 6 | Dev Process | 2026-02-03 |\n| 7 | Brand | 2025-10-29 |\n| 8 | Kyle Scratchpad | 2026-02-23 |\n| 9 | Backend Claude Code Architecture - Sub-Agents & Skills Implementation Plan | 2025-11-05 |\n| 10 | #7 \ud83d\udfe1 Idempotency Key Support (requestId) | 2026-02-27 |\n| 11 | Review Orchestrator | 2025-09-12 |\n| 12 | Git Hub Versions | 2025-07-29 |\n| 13 | Entitlements & Payments | 2026-03-05 |\n| 14 | Data Model | 2026-03-17 |\n| 15 | church onboarding feed | 2026-03-17 |\n\nThe most directly relevant pages are **\"Support Docs\"** and **\"Support AI Console\"** at the top \u2014 both updated yesterday. Would you like me to fetch the content of any of these?",
+  "duration_ms": 21279
+}

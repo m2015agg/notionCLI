@@ -11,6 +11,7 @@ export function dbCreateCommand() {
         .option("--title <text>", "Database title")
         .option("--description <text>", "Database description")
         .option("--properties <json>", "Property schema as JSON (initial_data_source.properties)")
+        .option("--schema <ddl>", 'Simple DDL: "Name TITLE, Status SELECT(\'To Do\',\'Done\'), Priority NUMBER"')
         .option("--inline", "Display inline in parent page")
         .option("--icon-emoji <emoji>", "Icon emoji")
         .option("--cover-url <url>", "Cover image URL")
@@ -41,6 +42,14 @@ export function dbCreateCommand() {
                 properties: JSON.parse(opts.properties),
             };
         }
+        // Schema DDL shorthand: "Name TITLE, Status SELECT('To Do','Done'), Priority NUMBER"
+        if (opts.schema && !opts.properties) {
+            const props = parseSchemaDDL(opts.schema);
+            body.initial_data_source = {
+                ...(body.initial_data_source ?? {}),
+                properties: props,
+            };
+        }
         // Inline
         if (opts.inline) {
             body.is_inline = true;
@@ -59,5 +68,109 @@ export function dbCreateCommand() {
         const response = await client.databases.create(body);
         outputSuccess(response, json);
     }));
+}
+/**
+ * Parse simple DDL string into Notion property schema.
+ * Format: "Name TITLE, Status SELECT('To Do','Done'), Priority NUMBER, Due DATE"
+ * Supported types: TITLE, TEXT (rich_text), NUMBER, SELECT, MULTI_SELECT, DATE,
+ *                  CHECKBOX, URL, EMAIL, PHONE, PEOPLE, FILES, RELATION
+ */
+function parseSchemaDDL(ddl) {
+    const props = {};
+    // Split by comma, but not commas inside parentheses
+    const columns = splitOutsideParens(ddl, ",");
+    for (const col of columns) {
+        const trimmed = col.trim();
+        if (!trimmed)
+            continue;
+        // Match: "ColumnName TYPE" or "ColumnName TYPE('opt1','opt2')"
+        const match = trimmed.match(/^(.+?)\s+(TITLE|TEXT|RICH_TEXT|NUMBER|SELECT|MULTI_SELECT|DATE|CHECKBOX|URL|EMAIL|PHONE|PEOPLE|FILES|RELATION)(?:\((.+)\))?$/i);
+        if (!match) {
+            throw new Error(`Invalid schema column: "${trimmed}". Expected format: "Name TYPE" or "Name SELECT('opt1','opt2')"`);
+        }
+        const [, name, typeRaw, optionsRaw] = match;
+        const type = typeRaw.toLowerCase();
+        switch (type) {
+            case "title":
+                props[name.trim()] = { title: {} };
+                break;
+            case "text":
+            case "rich_text":
+                props[name.trim()] = { rich_text: {} };
+                break;
+            case "number":
+                props[name.trim()] = { number: { format: "number" } };
+                break;
+            case "select": {
+                const options = parseOptions(optionsRaw);
+                props[name.trim()] = { select: { options: options.map((o) => ({ name: o })) } };
+                break;
+            }
+            case "multi_select": {
+                const options = parseOptions(optionsRaw);
+                props[name.trim()] = { multi_select: { options: options.map((o) => ({ name: o })) } };
+                break;
+            }
+            case "date":
+                props[name.trim()] = { date: {} };
+                break;
+            case "checkbox":
+                props[name.trim()] = { checkbox: {} };
+                break;
+            case "url":
+                props[name.trim()] = { url: {} };
+                break;
+            case "email":
+                props[name.trim()] = { email: {} };
+                break;
+            case "phone":
+                props[name.trim()] = { phone_number: {} };
+                break;
+            case "people":
+                props[name.trim()] = { people: {} };
+                break;
+            case "files":
+                props[name.trim()] = { files: {} };
+                break;
+            case "relation": {
+                if (!optionsRaw) {
+                    throw new Error(`RELATION requires a database ID: "Name RELATION(database_id)"`);
+                }
+                const dbId = optionsRaw.trim().replace(/^['"]|['"]$/g, "");
+                props[name.trim()] = { relation: { database_id: dbId, single_property: {} } };
+                break;
+            }
+            default:
+                throw new Error(`Unsupported column type: "${type}"`);
+        }
+    }
+    return props;
+}
+function splitOutsideParens(str, delimiter) {
+    const parts = [];
+    let depth = 0;
+    let current = "";
+    for (const ch of str) {
+        if (ch === "(")
+            depth++;
+        else if (ch === ")")
+            depth--;
+        if (ch === delimiter && depth === 0) {
+            parts.push(current);
+            current = "";
+        }
+        else {
+            current += ch;
+        }
+    }
+    if (current)
+        parts.push(current);
+    return parts;
+}
+function parseOptions(raw) {
+    if (!raw)
+        return [];
+    // Parse 'opt1','opt2' or "opt1","opt2" or opt1,opt2
+    return raw.split(",").map((o) => o.trim().replace(/^['"]|['"]$/g, ""));
 }
 //# sourceMappingURL=create.js.map

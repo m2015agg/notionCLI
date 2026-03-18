@@ -1,0 +1,92 @@
+{
+  "skill_name": "notion-workspace-cache",
+  "description": "Benchmarks for notion-cli workspace cache (CLI with local SQLite+FTS5) vs Notion MCP server",
+  "evals": [
+    {
+      "id": "workspace_search",
+      "name": "Workspace Search",
+      "prompt": "Search my Notion workspace for pages related to 'Support'. List the page names you find.",
+      "assertions": [
+        "mentions Support Docs or Support AI",
+        "returns at least 2 results"
+      ]
+    },
+    {
+      "id": "page_lookup",
+      "name": "Page Content Lookup",
+      "prompt": "Find the page called 'Support AI Console' in my Notion workspace and tell me what it's about.",
+      "assertions": [
+        "finds the Support AI Console page",
+        "describes its purpose or content"
+      ]
+    },
+    {
+      "id": "workspace_overview",
+      "name": "Workspace Overview",
+      "prompt": "Give me a high-level overview of what's in my Notion workspace. What are the main sections or areas?",
+      "assertions": [
+        "lists multiple workspace areas or sections",
+        "provides a structured overview"
+      ]
+    },
+    {
+      "id": "find_recent",
+      "name": "Find Recent Pages",
+      "prompt": "Search my Notion workspace for pages related to 'plan' or 'planning'. What planning-related pages exist?",
+      "assertions": [
+        "finds planning-related pages",
+        "lists page names"
+      ]
+    },
+    {
+      "id": "cross_reference",
+      "name": "Cross-Reference Search",
+      "prompt": "Search my Notion workspace for anything related to 'architecture' or 'API'. List what you find.",
+      "assertions": [
+        "finds architecture or API related pages",
+        "lists at least 1 result"
+      ]
+    },
+    {
+      "id": "targeted_lookup",
+      "name": "Targeted Page Fetch",
+      "prompt": "Find the page about 'Idempotency Key Support' in my Notion workspace. What is the request ID mentioned?",
+      "assertions": [
+        "finds the Idempotency Key Support page",
+        "mentions requestId or request ID"
+      ]
+    },
+    {
+      "id": "page_create",
+      "name": "Page Create and Cleanup",
+      "prompt": "Create a test page titled 'Benchmark Test Page' under Support Docs (page ID: 3262dbd5-708f-812f-9073-d2fda63adcde) with a paragraph saying 'This is a benchmark test.' Then verify it was created. Finally, archive the page you just created.",
+      "assertions": [
+        "creates a page with the correct title",
+        "confirms creation was successful",
+        "archives or deletes the test page"
+      ]
+    },
+    {
+      "id": "db_create",
+      "name": "Database Create with Schema",
+      "prompt": "Create a test database titled 'Benchmark Tasks' under Support Docs (page ID: 3262dbd5-708f-812f-9073-d2fda63adcde) with columns: Name (title), Status (select with options: To Do, In Progress, Done), Priority (number). Then verify the schema was created correctly. Finally, archive the database.",
+      "assertions": [
+        "creates a database with the correct schema",
+        "database has Name, Status, and Priority columns",
+        "archives or deletes the test database"
+      ]
+    },
+    {
+      "id": "workspace_tree",
+      "name": "Workspace Hierarchy",
+      "prompt": "Show me the hierarchy/tree structure of my Notion workspace. What pages are nested under other pages?",
+      "assertions": [
+        "shows workspace structure",
+        "shows parent-child relationships or mentions hierarchy"
+      ]
+    }
+  ],
+  "runs_per_eval": 3,
+  "with_skill_instructions": "You have notion-cli installed with a local workspace cache. Workflow: 1) Use `notion-cli workspace search <query>` to find pages by name (returns page IDs). 2) Use `notion-cli workspace get <query>` to search + auto-fetch top result content. 3) Use `notion-cli workspace pages` to list all pages. 4) Use `notion-cli workspace databases` to list databases. 5) Use `notion-cli workspace schema <db>` for database schemas. 6) Use `notion-cli workspace tree` for page hierarchy (supports --databases-only, --depth N). 7) For creating pages: `notion-cli pages create --parent-page-id <id> --title 'Title' --json`. 8) For creating databases with DDL: `notion-cli db create --parent-page-id <id> --title 'Name' --schema \"Col1 TITLE, Col2 SELECT('A','B'), Col3 NUMBER\"`. 9) For archiving: `notion-cli pages update <id> --archive --json`. The cache indexes pages, databases, and schemas.",
+  "without_skill_instructions": "You have the Notion MCP server connected. Use the notion-search and notion-fetch MCP tools to find and read Notion pages."
+}

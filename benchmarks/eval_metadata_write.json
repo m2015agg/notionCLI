@@ -1,0 +1,71 @@
+{
+  "skill_name": "notion-workspace-cache",
+  "description": "Write operation benchmarks for notion-cli (CLI) vs Notion MCP server. Tests page creation, database creation, task management, and bulk operations.",
+  "evals": [
+    {
+      "id": "page_create",
+      "name": "Page Creation",
+      "prompt": "Create a new Notion page called 'Benchmark Test Page' with this content: a heading 'Overview', a paragraph explaining this is a benchmark test, and a bullet list with 3 items: 'Speed', 'Accuracy', 'Reliability'. Return the page URL when done.",
+      "assertions": [
+        "page was created successfully",
+        "returns a URL or page ID",
+        "content includes Overview heading"
+      ]
+    },
+    {
+      "id": "page_update",
+      "name": "Page Update",
+      "prompt": "Find the page called 'Benchmark Test Page' in my Notion workspace. Add a new section at the bottom called 'Results' with a paragraph saying 'All benchmarks passed successfully.' Confirm the update.",
+      "assertions": [
+        "finds the existing page",
+        "adds new content to it",
+        "confirms the update was made"
+      ]
+    },
+    {
+      "id": "db_create",
+      "name": "Database Creation",
+      "prompt": "Create a Notion database called 'Benchmark Tasks' with these columns: Name (title), Status (select with options: To Do, In Progress, Done), Priority (number), Due Date (date). Return the database URL when done.",
+      "assertions": [
+        "database was created",
+        "has Name/title column",
+        "has Status column with select options",
+        "returns a URL or database ID"
+      ]
+    },
+    {
+      "id": "db_add_rows",
+      "name": "Database Row Creation",
+      "prompt": "Find the 'Benchmark Tasks' database and add these 3 tasks: 1) 'Fix login bug' with Status 'To Do' and Priority 1, 2) 'Update docs' with Status 'In Progress' and Priority 2, 3) 'Add tests' with Status 'To Do' and Priority 3. Confirm all 3 were created.",
+      "assertions": [
+        "finds the database",
+        "creates 3 rows",
+        "each row has correct name and status"
+      ]
+    },
+    {
+      "id": "task_workflow",
+      "name": "Task Status Workflow",
+      "prompt": "Find the task 'Fix login bug' in the 'Benchmark Tasks' database. Update its Status to 'In Progress'. Then update it again to 'Done'. Confirm the final status.",
+      "assertions": [
+        "finds the task",
+        "updates status at least once",
+        "final status is Done"
+      ]
+    },
+    {
+      "id": "structured_page",
+      "name": "Structured Page Creation",
+      "prompt": "Create a Notion page called 'Architecture Overview' with this structure: heading 'System Components' with 3 sub-items (API Server, Database, Worker Queue), heading 'Data Flow' with a paragraph describing request flow, and heading 'Deployment' with a callout block saying 'Deployed on AWS'. Return the URL.",
+      "assertions": [
+        "page was created",
+        "has multiple headings",
+        "includes structured content with sub-items"
+      ]
+    }
+  ],
+  "runs_per_eval": 2,
+  "cleanup_prompt": "Search my Notion workspace for pages named 'Benchmark Test Page' or 'Architecture Overview' and databases named 'Benchmark Tasks'. Archive/trash all of them. Confirm what was cleaned up.",
+  "with_skill_instructions": "You have notion-cli installed. Use `notion-cli workspace search <query>` for lookups, `notion-cli workspace get <query>` to search + fetch content, `notion-cli pages create --parent-page-id <id> --title \"Title\" --markdown \"# Content\" --json` to create pages with markdown, `notion-cli db create --parent-page-id <id> --title \"Name\" --schema \"Name TITLE, Status SELECT('To Do','Done')\" --json` to create databases with DDL shorthand, `notion-cli pages update <id> --properties '<json>' --json` to update. The Support Docs page ID is 3262dbd5-708f-812f-9073-d2fda63adcde. Test database: Matts Work Board (2f72dbd5-708f).",
+  "without_skill_instructions": "You have the Notion MCP server connected. Use notion-search to find pages, notion-create-pages to create pages, notion-create-database to create databases, notion-update-page to update pages. The Support Docs page ID is 3262dbd5-708f-812f-9073-d2fda63adcde."
+}

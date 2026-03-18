@@ -1,0 +1,7 @@
+{
+  "eval_id": "targeted_lookup",
+  "run": 3,
+  "mode": "without_skill",
+  "response": "The page is titled **\"#7 \ud83d\udfe1 Idempotency Key Support (requestId)\"**. The request ID mentioned is a **UUID `requestId`** \u2014 specifically, it's a client-supplied UUID sent on `POST /plans` to prevent duplicate plan creation.\n\nKey details from the page:\n- **Field name:** `requestId` (UUID)\n- **Purpose:** If a plan with that `requestId` already exists, return the existing plan instead of creating a duplicate (prevents double-tap/retry issues)\n- **Storage:** `request_id` column with a unique index in the DB\n- **Behavior:** Duplicate `requestId` \u2192 returns existing plan with `200` (not `201`)\n\nNo specific hardcoded request ID value is mentioned \u2014 the page describes the `requestId` as a client-generated UUID passed in the request.",
+  "duration_ms": 20868
+}

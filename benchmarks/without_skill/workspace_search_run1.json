@@ -1,0 +1,7 @@
+{
+  "eval_id": "workspace_search",
+  "run": 1,
+  "mode": "without_skill",
+  "response": "Here are the pages found related to **Support**:\n\n**Direct matches:**\n1. **Support Docs** \u2014 last edited 2026-03-17\n2. **Support AI Console** \u2014 last edited 2026-03-17\n3. **#7 \ud83d\udfe1 Idempotency Key Support (requestId)** \u2014 last edited 2026-02-27\n\nThe remaining results are looser semantic matches from the workspace \u2014 pages like *Home*, *Dev Process*, *Data Model*, *Entitlements & Payments*, etc. that likely mention \"support\" in their content but aren't primarily about it.\n\nWould you like me to fetch the content of any of these pages?",
+  "duration_ms": 14373
+}

@@ -37,10 +37,10 @@ export function snapshotCommand(): Command {
 
       const client = getClient();
 
-      // Paginate through all shared items
-      write("  Fetching shared items... ");
+      // Paginate through all shared pages
+      write("  Fetching pages... ");
       const allPages: Record<string, unknown>[] = [];
-      const allDatabases: Record<string, unknown>[] = [];
+      const seenPageIds = new Set<string>();
 
       let hasMore = true;
       let startCursor: string | undefined;
@@ -49,19 +49,50 @@ export function snapshotCommand(): Command {
         const response = await client.search({
           start_cursor: startCursor,
           page_size: 100,
+          filter: { property: "object", value: "page" },
         });
 
         for (const item of response.results) {
           const obj = item as unknown as Record<string, unknown>;
-          if (obj.object === "page") allPages.push(obj);
-          if (obj.object === "database") allDatabases.push(obj);
+          if (!seenPageIds.has(obj.id as string)) {
+            seenPageIds.add(obj.id as string);
+            allPages.push(obj);
+          }
+        }
+
+        hasMore = response.has_more;
+        startCursor = response.next_cursor || undefined;
+      }
+      write(`\u2713 ${allPages.length} pages\n`);
+
+      // Fetch databases separately (search API with filter)
+      write("  Fetching databases... ");
+      const allDatabases: Record<string, unknown>[] = [];
+      const seenDbIds = new Set<string>();
+
+      hasMore = true;
+      startCursor = undefined;
+
+      while (hasMore) {
+        const response = await client.search({
+          start_cursor: startCursor,
+          page_size: 100,
+          filter: { property: "object", value: "data_source" as any },
+        });
+
+        for (const item of response.results) {
+          const obj = item as unknown as Record<string, unknown>;
+          if (!seenDbIds.has(obj.id as string)) {
+            seenDbIds.add(obj.id as string);
+            allDatabases.push(obj);
+          }
         }
 
         hasMore = response.has_more;
         startCursor = response.next_cursor || undefined;
       }
 
-      write(`\u2713 ${allPages.length} pages, ${allDatabases.length} databases\n`);
+      write(`\u2713 ${allDatabases.length} databases\n`);
 
       if (allDatabases.length === 0) {
         write("  (No databases found — ensure databases are shared with the integration)\n");
@@ -70,17 +101,33 @@ export function snapshotCommand(): Command {
       // Fetch database schemas
       write("  Fetching database schemas... ");
       const dbProperties: DbPropertyRow[] = [];
+      const dbSchemas = new Map<string, Record<string, unknown>>();
       for (const db of allDatabases) {
         try {
           const schema = await client.databases.retrieve({ database_id: db.id as string });
-          const props = (schema as unknown as Record<string, unknown>).properties as Record<string, { type: string }> | undefined;
+          const schemaObj = schema as unknown as Record<string, unknown>;
+          dbSchemas.set(db.id as string, schemaObj);
+          const props = schemaObj.properties as Record<string, Record<string, unknown>> | undefined;
           if (props) {
             for (const [name, prop] of Object.entries(props)) {
+              // Extract config for select/multi_select options
+              let config: string | null = null;
+              if (prop.type === "select" && prop.select) {
+                const sel = prop.select as { options?: Array<{ name: string; color?: string }> };
+                if (sel.options) config = JSON.stringify(sel.options.map((o) => o.name));
+              } else if (prop.type === "multi_select" && prop.multi_select) {
+                const ms = prop.multi_select as { options?: Array<{ name: string; color?: string }> };
+                if (ms.options) config = JSON.stringify(ms.options.map((o) => o.name));
+              } else if (prop.type === "relation" && prop.relation) {
+                config = JSON.stringify(prop.relation);
+              } else if (prop.type === "formula" && prop.formula) {
+                config = JSON.stringify(prop.formula);
+              }
               dbProperties.push({
                 database_id: db.id as string,
                 name,
-                type: prop.type,
-                config: null,
+                type: prop.type as string,
+                config,
               });
             }
           }
@@ -89,6 +136,37 @@ export function snapshotCommand(): Command {
         }
       }
       write(`\u2713 ${dbProperties.length} properties across ${allDatabases.length} databases\n`);
+
+      // Fetch first-paragraph summaries for pages (batched, with rate limit awareness)
+      write("  Fetching page summaries... ");
+      const pageSummaries = new Map<string, string>();
+      let summaryCount = 0;
+      for (const page of allPages) {
+        try {
+          const blocks = await client.blocks.children.list({
+            block_id: page.id as string,
+            page_size: 3,
+          });
+          const textParts: string[] = [];
+          for (const block of blocks.results) {
+            const b = block as unknown as Record<string, unknown>;
+            const bType = b.type as string;
+            const content = b[bType] as { rich_text?: Array<{ plain_text: string }> } | undefined;
+            if (content?.rich_text) {
+              textParts.push(content.rich_text.map((t) => t.plain_text).join(""));
+            }
+            if (textParts.join(" ").length >= 200) break;
+          }
+          const summary = textParts.join(" ").slice(0, 200).trim();
+          if (summary) {
+            pageSummaries.set(page.id as string, summary);
+            summaryCount++;
+          }
+        } catch {
+          // Skip inaccessible pages
+        }
+      }
+      write(`\u2713 ${summaryCount} summaries\n`);
 
       // Create output directory
       const outDir = join(process.cwd(), opts.output);
@@ -143,7 +221,9 @@ export function snapshotCommand(): Command {
       write(`  Generating ${allDatabases.length} database files... `);
       for (const db of allDatabases) {
         const title = (db.title as Array<{ plain_text: string }>)?.map((t) => t.plain_text).join("") || "(untitled)";
-        const props = db.properties as Record<string, { type: string }> || {};
+        // Use fetched schema if available, fall back to search result properties
+        const schemaData = dbSchemas.get(db.id as string);
+        const props = (schemaData?.properties || db.properties) as Record<string, Record<string, unknown>> || {};
         const lines = [
           `# ${title}`,
           "",
@@ -151,11 +231,22 @@ export function snapshotCommand(): Command {
           `URL: ${db.url}`,
           `Properties: ${Object.keys(props).length}`,
           "",
-          "| Property | Type |",
-          "|----------|------|",
+          "| Property | Type | Details |",
+          "|----------|------|---------|",
         ];
         for (const [name, prop] of Object.entries(props)) {
-          lines.push(`| ${name} | ${prop.type} |`);
+          let details = "";
+          if (prop.type === "select" && prop.select) {
+            const sel = prop.select as { options?: Array<{ name: string }> };
+            if (sel.options?.length) details = sel.options.map((o) => o.name).join(", ");
+          } else if (prop.type === "multi_select" && prop.multi_select) {
+            const ms = prop.multi_select as { options?: Array<{ name: string }> };
+            if (ms.options?.length) details = ms.options.map((o) => o.name).join(", ");
+          } else if (prop.type === "relation" && prop.relation) {
+            const rel = prop.relation as { database_id?: string };
+            if (rel.database_id) details = `\u2192 ${rel.database_id.slice(0, 8)}...`;
+          }
+          lines.push(`| ${name} | ${prop.type} | ${details} |`);
         }
         writeFileSync(join(dbsDir, `${db.id}.md`), lines.join("\n"));
       }
@@ -179,20 +270,23 @@ export function snapshotCommand(): Command {
             icon: getIcon(p),
             last_edited: p.last_edited_time as string,
             created: p.created_time as string,
+            summary: pageSummaries.get(p.id as string) || null,
           };
         });
 
         const dbRows: DatabaseRow[] = allDatabases.map((d) => {
-          const parent = d.parent as { type: string; page_id?: string } || { type: "unknown" };
+          const parent = d.parent as { type: string; page_id?: string; database_id?: string } || { type: "unknown" };
+          const schemaData = dbSchemas.get(d.id as string);
           return {
             id: d.id as string,
             title: (d.title as Array<{ plain_text: string }>)?.map((t) => t.plain_text).join("") || "(untitled)",
             parent_type: parent.type,
-            parent_id: parent.page_id || "workspace",
+            parent_id: parent.page_id || parent.database_id || "workspace",
             url: d.url as string,
             icon: getIcon(d),
             last_edited: d.last_edited_time as string,
             row_count: 0,
+            schema_json: schemaData ? JSON.stringify(schemaData.properties) : null,
           };
         });
 

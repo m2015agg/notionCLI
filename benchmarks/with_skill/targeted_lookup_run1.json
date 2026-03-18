@@ -1,0 +1,7 @@
+{
+  "eval_id": "targeted_lookup",
+  "run": 1,
+  "mode": "with_skill",
+  "response": "The page **\"#7 \ud83d\udfe1 Idempotency Key Support (requestId)\"** describes preventing duplicate plans by having the client send a UUID `requestId` on `POST /plans`.\n\nThe `request_id` in the API response for this page fetch is: **`04fdf6cc-1d11-470b-9dc5-3ec7e958b962`**\n\nFor context, the page content describes:\n- Client sends a UUID `requestId` on `POST /plans`\n- If a plan with that `requestId` already exists, return the existing plan (200, not 201)\n- Requires a schema migration to add `request_id` column with unique index\n- Prevents double-tap and retry issues",
+  "duration_ms": 40179
+}
