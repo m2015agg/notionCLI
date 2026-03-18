@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { join } from "node:path";
 import { mkdirSync, writeFileSync, existsSync, rmSync } from "node:fs";
-import { getClient } from "../client.js";
+import { getClient, getDataSource } from "../client.js";
 import { openDb, clearData, setMetadata, insertPages, insertDatabases, } from "../util/workspace-db.js";
 function write(msg) {
     process.stdout.write(msg);
@@ -53,29 +53,66 @@ export function snapshotCommand() {
             startCursor = response.next_cursor || undefined;
         }
         write(`\u2713 ${allPages.length} pages\n`);
-        // Fetch databases separately (search API with filter)
+        // Fetch databases via 3 methods: search filter, page parent discovery, direct retrieve
         write("  Fetching databases... ");
         const allDatabases = [];
         const seenDbIds = new Set();
+        // Method 1: search API with data_source filter (connected/external databases)
         hasMore = true;
         startCursor = undefined;
         while (hasMore) {
-            const response = await client.search({
-                start_cursor: startCursor,
-                page_size: 100,
-                filter: { property: "object", value: "data_source" },
-            });
-            for (const item of response.results) {
-                const obj = item;
-                if (!seenDbIds.has(obj.id)) {
-                    seenDbIds.add(obj.id);
-                    allDatabases.push(obj);
+            try {
+                const response = await client.search({
+                    start_cursor: startCursor,
+                    page_size: 100,
+                    filter: { property: "object", value: "data_source" },
+                });
+                for (const item of response.results) {
+                    const obj = item;
+                    if (!seenDbIds.has(obj.id)) {
+                        seenDbIds.add(obj.id);
+                        allDatabases.push(obj);
+                    }
                 }
+                hasMore = response.has_more;
+                startCursor = response.next_cursor || undefined;
             }
-            hasMore = response.has_more;
-            startCursor = response.next_cursor || undefined;
+            catch {
+                hasMore = false;
+            }
         }
-        write(`\u2713 ${allDatabases.length} databases\n`);
+        // Method 2: discover databases from page parents (data_source_id type)
+        const discoveredDbIds = new Set();
+        for (const page of allPages) {
+            const parent = page.parent;
+            if (parent?.type === "data_source_id" && parent.data_source_id) {
+                discoveredDbIds.add(parent.data_source_id);
+            }
+            else if (parent?.type === "database_id" && parent.database_id) {
+                discoveredDbIds.add(parent.database_id);
+            }
+        }
+        // Method 3: retrieve each discovered data source via v2025-09-03 API
+        let accessible = 0;
+        let inaccessible = 0;
+        for (const dbId of discoveredDbIds) {
+            if (seenDbIds.has(dbId))
+                continue;
+            try {
+                const obj = await getDataSource(dbId);
+                seenDbIds.add(dbId);
+                allDatabases.push(obj);
+                accessible++;
+            }
+            catch {
+                inaccessible++;
+            }
+        }
+        write(`\u2713 ${allDatabases.length} databases`);
+        if (inaccessible > 0) {
+            write(` (${inaccessible} inaccessible \u2014 share them with your integration)`);
+        }
+        write("\n");
         if (allDatabases.length === 0) {
             write("  (No databases found — ensure databases are shared with the integration)\n");
         }
@@ -85,8 +122,8 @@ export function snapshotCommand() {
         const dbSchemas = new Map();
         for (const db of allDatabases) {
             try {
-                const schema = await client.databases.retrieve({ database_id: db.id });
-                const schemaObj = schema;
+                // Use the data_source API (v2025-09-03) for schema retrieval
+                const schemaObj = await getDataSource(db.id);
                 dbSchemas.set(db.id, schemaObj);
                 const props = schemaObj.properties;
                 if (props) {
@@ -250,7 +287,7 @@ export function snapshotCommand() {
                     title: extractTitle(p),
                     type: p.object,
                     parent_type: parent.type,
-                    parent_id: parent.page_id || parent.database_id || "workspace",
+                    parent_id: parent.page_id || parent.database_id || parent.data_source_id || parent.block_id || "workspace",
                     url: p.url,
                     icon: getIcon(p),
                     last_edited: p.last_edited_time,
@@ -265,7 +302,7 @@ export function snapshotCommand() {
                     id: d.id,
                     title: d.title?.map((t) => t.plain_text).join("") || "(untitled)",
                     parent_type: parent.type,
-                    parent_id: parent.page_id || parent.database_id || "workspace",
+                    parent_id: parent.page_id || parent.database_id || parent.data_source_id || parent.block_id || "workspace",
                     url: d.url,
                     icon: getIcon(d),
                     last_edited: d.last_edited_time,

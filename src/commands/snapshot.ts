@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { join } from "node:path";
 import { mkdirSync, writeFileSync, existsSync, rmSync } from "node:fs";
-import { getClient } from "../client.js";
+import { getClient, getDataSource } from "../client.js";
 import {
   openDb, clearData, setMetadata, insertPages, insertDatabases,
   type PageRow, type DatabaseRow, type DbPropertyRow,
@@ -65,34 +65,66 @@ export function snapshotCommand(): Command {
       }
       write(`\u2713 ${allPages.length} pages\n`);
 
-      // Fetch databases separately (search API with filter)
+      // Fetch databases via 3 methods: search filter, page parent discovery, direct retrieve
       write("  Fetching databases... ");
       const allDatabases: Record<string, unknown>[] = [];
       const seenDbIds = new Set<string>();
 
+      // Method 1: search API with data_source filter (connected/external databases)
       hasMore = true;
       startCursor = undefined;
-
       while (hasMore) {
-        const response = await client.search({
-          start_cursor: startCursor,
-          page_size: 100,
-          filter: { property: "object", value: "data_source" as any },
-        });
-
-        for (const item of response.results) {
-          const obj = item as unknown as Record<string, unknown>;
-          if (!seenDbIds.has(obj.id as string)) {
-            seenDbIds.add(obj.id as string);
-            allDatabases.push(obj);
+        try {
+          const response = await client.search({
+            start_cursor: startCursor,
+            page_size: 100,
+            filter: { property: "object", value: "data_source" as any },
+          });
+          for (const item of response.results) {
+            const obj = item as unknown as Record<string, unknown>;
+            if (!seenDbIds.has(obj.id as string)) {
+              seenDbIds.add(obj.id as string);
+              allDatabases.push(obj);
+            }
           }
+          hasMore = response.has_more;
+          startCursor = response.next_cursor || undefined;
+        } catch {
+          hasMore = false;
         }
-
-        hasMore = response.has_more;
-        startCursor = response.next_cursor || undefined;
       }
 
-      write(`\u2713 ${allDatabases.length} databases\n`);
+      // Method 2: discover databases from page parents (data_source_id type)
+      const discoveredDbIds = new Set<string>();
+      for (const page of allPages) {
+        const parent = page.parent as { type?: string; data_source_id?: string; database_id?: string } | undefined;
+        if (parent?.type === "data_source_id" && parent.data_source_id) {
+          discoveredDbIds.add(parent.data_source_id);
+        } else if (parent?.type === "database_id" && parent.database_id) {
+          discoveredDbIds.add(parent.database_id);
+        }
+      }
+
+      // Method 3: retrieve each discovered data source via v2025-09-03 API
+      let accessible = 0;
+      let inaccessible = 0;
+      for (const dbId of discoveredDbIds) {
+        if (seenDbIds.has(dbId)) continue;
+        try {
+          const obj = await getDataSource(dbId);
+          seenDbIds.add(dbId);
+          allDatabases.push(obj);
+          accessible++;
+        } catch {
+          inaccessible++;
+        }
+      }
+
+      write(`\u2713 ${allDatabases.length} databases`);
+      if (inaccessible > 0) {
+        write(` (${inaccessible} inaccessible \u2014 share them with your integration)`);
+      }
+      write("\n");
 
       if (allDatabases.length === 0) {
         write("  (No databases found — ensure databases are shared with the integration)\n");
@@ -104,8 +136,8 @@ export function snapshotCommand(): Command {
       const dbSchemas = new Map<string, Record<string, unknown>>();
       for (const db of allDatabases) {
         try {
-          const schema = await client.databases.retrieve({ database_id: db.id as string });
-          const schemaObj = schema as unknown as Record<string, unknown>;
+          // Use the data_source API (v2025-09-03) for schema retrieval
+          const schemaObj = await getDataSource(db.id as string);
           dbSchemas.set(db.id as string, schemaObj);
           const props = schemaObj.properties as Record<string, Record<string, unknown>> | undefined;
           if (props) {
@@ -259,13 +291,13 @@ export function snapshotCommand(): Command {
         clearData(sqlDb);
 
         const pageRows: PageRow[] = allPages.map((p) => {
-          const parent = p.parent as { type: string; page_id?: string; database_id?: string } || { type: "unknown" };
+          const parent = p.parent as { type: string; page_id?: string; database_id?: string; data_source_id?: string; block_id?: string } || { type: "unknown" };
           return {
             id: p.id as string,
             title: extractTitle(p),
             type: p.object as string,
             parent_type: parent.type,
-            parent_id: parent.page_id || parent.database_id || "workspace",
+            parent_id: parent.page_id || parent.database_id || parent.data_source_id || parent.block_id || "workspace",
             url: p.url as string,
             icon: getIcon(p),
             last_edited: p.last_edited_time as string,
@@ -275,13 +307,13 @@ export function snapshotCommand(): Command {
         });
 
         const dbRows: DatabaseRow[] = allDatabases.map((d) => {
-          const parent = d.parent as { type: string; page_id?: string; database_id?: string } || { type: "unknown" };
+          const parent = d.parent as { type: string; page_id?: string; database_id?: string; data_source_id?: string; block_id?: string } || { type: "unknown" };
           const schemaData = dbSchemas.get(d.id as string);
           return {
             id: d.id as string,
             title: (d.title as Array<{ plain_text: string }>)?.map((t) => t.plain_text).join("") || "(untitled)",
             parent_type: parent.type,
-            parent_id: parent.page_id || parent.database_id || "workspace",
+            parent_id: parent.page_id || parent.database_id || parent.data_source_id || parent.block_id || "workspace",
             url: d.url as string,
             icon: getIcon(d),
             last_edited: d.last_edited_time as string,
