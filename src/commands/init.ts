@@ -82,9 +82,36 @@ export function initCommand(): Command {
         results.push("Permissions: could not auto-approve (run: notion-cli approve)");
       }
 
-      process.stdout.write("notion-cli init complete:\n");
+      // 6. Snapshot workspace
+      process.stdout.write("\n  Snapshotting workspace...\n");
+      try {
+        execSync("notion-cli snapshot", { encoding: "utf-8", stdio: "inherit" });
+        results.push("Snapshot: workspace cached to .notion-cache/");
+      } catch {
+        results.push("Snapshot: failed (run: notion-cli snapshot)");
+      }
+
+      // 7. Add .notion-cache/ to .gitignore
+      if (existsSync(gitignorePath)) {
+        const giContent2 = readFileSync(gitignorePath, "utf-8");
+        if (!giContent2.includes(".notion-cache")) {
+          appendFileSync(gitignorePath, ".notion-cache/\n");
+          results.push(".gitignore: appended .notion-cache/");
+        }
+      }
+
+      // 8. Set up nightly cron
+      try {
+        execSync("notion-cli cron --time 03:30", { encoding: "utf-8", stdio: "pipe" });
+        results.push("Cron: nightly snapshot at 03:30");
+      } catch {
+        results.push("Cron: could not set up (run: notion-cli cron)");
+      }
+
+      process.stdout.write("\nnotion-cli init complete:\n");
       for (const r of results) {
         process.stdout.write(`  ${r}\n`);
       }
+      process.stdout.write("\n");
     });
 }

@@ -15,6 +15,9 @@ const READ_COMMANDS = [
     "Bash(notion-cli files get:*)",
     "Bash(notion-cli users me:*)",
     "Bash(notion-cli users list:*)",
+    "Bash(notion-cli workspace:*)",
+    "Bash(notion-cli snapshot:*)",
+    "Bash(notion-cli cron --status:*)",
 ];
 function loadSettings(path) {
     if (!existsSync(path))

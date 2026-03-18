@@ -1,6 +1,6 @@
 {
   "name": "@m2015agg/notion-cli",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "type": "module",
   "description": "CLI wrapper for the Notion API, designed for LLM/AI agent consumption",
   "license": "MIT",
@@ -21,9 +21,11 @@
   },
   "dependencies": {
     "@notionhq/client": "^5.13.0",
+    "better-sqlite3": "^12.8.0",
     "commander": "^13.1.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"

@@ -237,6 +237,34 @@ notion-cli users me --json
 notion-cli users list --json
 ```
 
+## Workspace Snapshot (Local Cache)
+
+Cache your entire Notion workspace structure locally for instant searches:
+
+```bash
+# Snapshot all shared pages and databases
+notion-cli snapshot
+
+# Search cached workspace
+notion-cli workspace search "backend"
+notion-cli workspace pages
+notion-cli workspace databases
+notion-cli workspace schema <database_id>
+```
+
+One API call snapshots everything into SQLite + FTS5 + markdown:
+
+```
+.notion-cache/
+├── workspace.db         # SQLite + FTS5 (fast queries)
+├── index.md             # All pages + databases overview
+├── pages/               # (future: page summaries)
+└── databases/
+    └── <id>.md          # Database schema (properties + types)
+```
+
+Your agent searches locally instead of hitting the Notion API every time. `init` runs snapshot + nightly cron automatically.
+
 ## Agent-Friendly Design
 
 Every command follows three rules from the [CLI army pattern](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969):
@@ -301,6 +329,37 @@ notion-cli docs --format cursor >> .cursorrules
 # OpenClaw skill format
 notion-cli docs --format skill > SKILL.md
 ```
+
+## Limitations
+
+- **Database visibility** — Notion databases must be explicitly shared with the integration to appear in snapshots. If you see 0 databases, share them in Notion.
+- **Page content not cached** — Snapshot caches page titles and metadata, not full page content (too expensive for large workspaces). Use `pages get --markdown` for content.
+- **No real-time sync** — Cache refreshes via nightly cron or manual `snapshot`. Changes between refreshes won't appear.
+- **Rate limits** — Large workspaces (1000+ pages) may hit Notion API rate limits during snapshot. The SDK handles retries automatically.
+
+## Roadmap
+
+### v0.6 — Richer Cache
+- [ ] Cache database row counts via `db query --count`
+- [ ] Cache page content summaries (first 200 chars)
+- [ ] `workspace tree` — hierarchical page/database view
+- [ ] `workspace diff` — detect changes since last snapshot
+
+### v0.7 — Semantic Search
+- [ ] Optional vector embeddings for page titles + content
+- [ ] `workspace search --semantic "project status updates"` → fuzzy matching
+- [ ] Cross-reference with supabase-skill and context7-skill caches
+
+### v1.0 — Full Workspace Intelligence
+- [ ] Anthropic skills marketplace integration (SKILL.md)
+- [ ] Benchmarks: CLI vs Notion MCP server
+- [ ] Cursor `.cursorrules` and Codex `AGENTS.md` generation
+- [ ] Template operations (create pages from templates)
+
+## Companion Packages
+
+- **[@m2015agg/supabase-skill](https://www.npmjs.com/package/@m2015agg/supabase-skill)** — Same pattern for Supabase database schema (100% benchmark pass rate)
+- **[@m2015agg/context7-skill](https://www.npmjs.com/package/@m2015agg/context7-skill)** — Same pattern for library documentation
 
 ## Development
 

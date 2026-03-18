@@ -17,6 +17,9 @@ import { usersCommand } from "./commands/users/index.js";
 import { doctorCommand } from "./commands/doctor.js";
 import { approveCommand } from "./commands/approve.js";
 import { updateCommand } from "./commands/update.js";
+import { snapshotCommand } from "./commands/snapshot.js";
+import { workspaceCommand } from "./commands/workspace.js";
+import { cronCommand } from "./commands/cron.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
 const program = new Command();
@@ -39,5 +42,8 @@ program.addCommand(uninstallCommand());
 program.addCommand(doctorCommand());
 program.addCommand(approveCommand());
 program.addCommand(updateCommand());
+program.addCommand(snapshotCommand());
+program.addCommand(workspaceCommand());
+program.addCommand(cronCommand());
 program.parse();
 //# sourceMappingURL=index.js.map

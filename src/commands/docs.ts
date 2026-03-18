@@ -61,6 +61,21 @@ Requires: \`NOTION_API_KEY\` env var. Returns JSON by default when piped.
 - Pipe JSON via stdin: \`echo '<json>' | notion-cli pages create --stdin --json\`
 - Inline JSON flags: \`--properties\`, \`--filter\`, \`--sorts\`, \`--children\`, \`--content\`
 
+### Workspace Snapshot (local cache — use INSTEAD of searching every time)
+If \`.notion-cache/\` exists, ALWAYS use these commands for workspace lookups:
+- \`notion-cli snapshot\` — cache workspace structure (pages, databases, schemas)
+- \`notion-cli workspace search <query>\` — FTS5 search across cached pages, databases, properties
+- \`notion-cli workspace pages\` — list all cached pages
+- \`notion-cli workspace databases\` — list all cached databases
+- \`notion-cli workspace schema <database_id>\` — show cached database schema (properties + types)
+- Read \`.notion-cache/index.md\` — overview of all pages and databases
+- Read \`.notion-cache/databases/<id>.md\` — database schema detail
+
+### Workspace Snapshot Auto-Refresh
+- Snapshot refreshes nightly via cron (if configured with \`notion-cli cron\`)
+- **After creating pages/databases**: Run \`notion-cli snapshot\` to update cache
+- **Rule of thumb**: If you created or restructured Notion content, refresh the snapshot
+
 ### Setup
 - \`notion-cli install\` — global setup (adds to ~/.claude/CLAUDE.md + shell profile)
 - \`notion-cli init\` — per-project setup (CLAUDE.md + .env + .gitignore)
