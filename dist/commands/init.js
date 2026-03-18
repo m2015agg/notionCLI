@@ -53,24 +53,24 @@ export function initCommand() {
                 results.push(".gitignore: appended .env");
             }
         }
-        // 4. Walkthrough skill
-        const skillsDir = join(cwd, ".claude", "skills");
+        // 4. /notion slash command
+        const skillsDir = join(cwd, ".claude", "commands");
         const skillPath = join(skillsDir, "notion.md");
         if (!existsSync(skillsDir)) {
             mkdirSync(skillsDir, { recursive: true });
         }
         if (!existsSync(skillPath)) {
             writeFileSync(skillPath, WALKTHROUGH_TEMPLATE);
-            results.push(".claude/skills/notion.md: created");
+            results.push(".claude/commands/notion.md: created");
         }
         else {
             const existing = readFileSync(skillPath, "utf-8");
             if (existing !== WALKTHROUGH_TEMPLATE) {
                 writeFileSync(skillPath, WALKTHROUGH_TEMPLATE);
-                results.push(".claude/skills/notion.md: updated");
+                results.push(".claude/commands/notion.md: updated");
             }
             else {
-                results.push(".claude/skills/notion.md: unchanged");
+                results.push(".claude/commands/notion.md: unchanged");
             }
         }
         // 5. Auto-approve read permissions
