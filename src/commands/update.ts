@@ -64,7 +64,11 @@ export function updateCommand(): Command {
           stdio: "inherit",
           timeout: 60000,
         });
-        process.stdout.write("Update complete!\n");
+        process.stdout.write("\nUpdate complete!\n");
+        process.stdout.write("\n  Run `notion-cli init` in your project directories to update:\n");
+        process.stdout.write("    - CLAUDE.md skill doc\n");
+        process.stdout.write("    - /notion walkthrough skill\n");
+        process.stdout.write("    - Claude Code permissions\n\n");
       } catch {
         process.stderr.write("Update failed. Try manually: npm install -g @m2015agg/notion-cli@latest\n");
         process.exit(1);
