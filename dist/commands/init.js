@@ -55,22 +55,22 @@ export function initCommand() {
         }
         // 4. Walkthrough skill
         const skillsDir = join(cwd, ".claude", "skills");
-        const skillPath = join(skillsDir, "notion-walkthrough.md");
+        const skillPath = join(skillsDir, "notion.md");
         if (!existsSync(skillsDir)) {
             mkdirSync(skillsDir, { recursive: true });
         }
         if (!existsSync(skillPath)) {
             writeFileSync(skillPath, WALKTHROUGH_TEMPLATE);
-            results.push(".claude/skills/notion-walkthrough.md: created");
+            results.push(".claude/skills/notion.md: created");
         }
         else {
             const existing = readFileSync(skillPath, "utf-8");
             if (existing !== WALKTHROUGH_TEMPLATE) {
                 writeFileSync(skillPath, WALKTHROUGH_TEMPLATE);
-                results.push(".claude/skills/notion-walkthrough.md: updated");
+                results.push(".claude/skills/notion.md: updated");
             }
             else {
-                results.push(".claude/skills/notion-walkthrough.md: unchanged");
+                results.push(".claude/skills/notion.md: unchanged");
             }
         }
         // 5. Auto-approve read permissions
