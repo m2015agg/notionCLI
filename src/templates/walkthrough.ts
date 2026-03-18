@@ -1,7 +1,6 @@
 export const WALKTHROUGH_TEMPLATE = `---
-name: notion
 description: Interactive walkthrough of your Notion workspace — pages, databases, and available commands
-user_invocable: true
+allowed-tools: Bash(notion-cli:*)
 ---
 
 # Notion Workspace Walkthrough
