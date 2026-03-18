@@ -1,8 +1,32 @@
 # notion-cli
 
+[![npm version](https://img.shields.io/npm/v/@m2015agg/notion-cli)](https://www.npmjs.com/package/@m2015agg/notion-cli)
+[![license](https://img.shields.io/npm/l/@m2015agg/notion-cli)](https://github.com/m2015agg/notion-cli/blob/main/LICENSE)
+
 A CLI wrapper for the Notion API, designed for LLM/AI agent consumption.
 
 Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969) — zero context overhead, composable via pipes, structured JSON output, clean exit codes.
+
+## Quick Start
+
+```bash
+# 1. Install globally
+npm install -g @m2015agg/notion-cli
+
+# 2. Set up (prompts for API key, validates it, adds to shell profile + CLAUDE.md)
+notion-cli install
+
+# 3. Reload shell
+source ~/.bashrc  # or source ~/.zshrc
+
+# 4. Initialize in your project (adds docs, skill, permissions)
+cd your-project && notion-cli init
+
+# 5. Use /notion in Claude Code for a guided walkthrough
+
+# 6. Check setup health
+notion-cli doctor
+```
 
 ## Install
 
@@ -50,6 +74,39 @@ Adds notion-cli documentation to `~/.claude/CLAUDE.md` and a `NOTION_API_KEY` pl
 
 ```bash
 notion-cli install
+```
+
+### Health Check
+
+```bash
+notion-cli doctor
+```
+
+Validates: API key set, API key works, CLAUDE.md has docs, .env configured, permissions approved.
+
+### Approve Permissions
+
+Pre-approve read-only commands in Claude Code so you don't get prompted:
+
+```bash
+# Project-level (recommended)
+notion-cli approve
+
+# Global
+notion-cli approve --global
+
+# Remove approvals
+notion-cli approve --remove
+```
+
+### Self-Update
+
+```bash
+# Check for updates
+notion-cli update --check
+
+# Update to latest
+notion-cli update
 ```
 
 ### Uninstall

@@ -85,6 +85,25 @@ export function installCommand(): Command {
         process.stdout.write(`  ${r}\n`);
       }
 
+      // Validate API key works
+      const finalKey = process.env.NOTION_API_KEY || opts.apiKey;
+      if (finalKey && finalKey !== "your-api-key-here") {
+        process.stdout.write("\nValidating API key...\n");
+        try {
+          const { execSync } = await import("node:child_process");
+          const result = execSync("notion-cli users me --json", {
+            encoding: "utf-8",
+            timeout: 15000,
+            env: { ...process.env, NOTION_API_KEY: finalKey },
+          });
+          const parsed = JSON.parse(result);
+          const name = parsed.name || parsed.bot?.owner?.workspace?.name || "unknown";
+          process.stdout.write(`  Connected as: ${name}\n`);
+        } catch {
+          process.stdout.write("  Warning: API key validation failed. Check your key at notion.so/my-integrations\n");
+        }
+      }
+
       if (!opts.skipShell) {
         const shell = process.env.SHELL || "/bin/bash";
         const profileName = shell.includes("zsh") ? ".zshrc" : ".bashrc";

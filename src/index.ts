@@ -14,6 +14,9 @@ import { commentsCommand } from "./commands/comments/index.js";
 import { searchCommand } from "./commands/search.js";
 import { filesCommand } from "./commands/files/index.js";
 import { usersCommand } from "./commands/users/index.js";
+import { doctorCommand } from "./commands/doctor.js";
+import { approveCommand } from "./commands/approve.js";
+import { updateCommand } from "./commands/update.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
@@ -37,5 +40,8 @@ program.addCommand(usersCommand());
 program.addCommand(installCommand());
 program.addCommand(initCommand());
 program.addCommand(uninstallCommand());
+program.addCommand(doctorCommand());
+program.addCommand(approveCommand());
+program.addCommand(updateCommand());
 
 program.parse();
