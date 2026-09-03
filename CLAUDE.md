@@ -3,12 +3,14 @@
 CLI wrapper for the Notion API. Designed for LLM/AI agent consumption.
 
 ## Setup
-- Requires: Node.js 20+, `NOTION_API_KEY` environment variable
+- Requires: Node.js 20+, `NOTION_API_KEY` env var (auto-loaded from `./.env` when unset; a real env var always wins)
 - Build: `npm run build`
 - Link locally: `npm run link`
 - Test: `npm test`
-- Init in project: `notion-cli init`
-- Global install: `notion-cli install`
+- Global install: `notion-cli install` - writes agent skill to `~/.claude/skills/notion-cli/SKILL.md` + one-line pointer in `~/.claude/CLAUDE.md` + shell profile key; `--claude-md` = legacy full injection into CLAUDE.md
+- Init in project: `notion-cli init` - project skill (`.claude/skills/notion-cli/SKILL.md`) + pointer in project CLAUDE.md, plus `.env`, `.gitignore`, `/notion` command, permissions, snapshot, nightly cron
+- Legacy full-doc CLAUDE.md injections migrate to the pointer when `install`/`init` run explicitly (marker-delimited); npm postinstall (`install --postinstall`) refreshes an existing full-doc block in place so `--claude-md` survives updates
+- Health check: `notion-cli doctor`
 
 ## Available CLIs
 
@@ -69,12 +71,27 @@ CLI wrapper for the Notion API. Designed for LLM/AI agent consumption.
 ### Users
 - `notion-cli users me --json` - current bot user (auth check)
 - `notion-cli users list --json` - list workspace users
+- `notion-cli users list --all --json` - list ALL workspace users
 
 ### Stdin (pipe JSON for complex requests)
 - `echo '<json>' | notion-cli pages create --stdin --json`
 - `echo '<json>' | notion-cli db query <id> --stdin --json`
 - `echo '<json>' | notion-cli blocks append <id> --stdin --json`
 - `echo '<json>' | notion-cli comments create --stdin --json`
+
+### Workspace Snapshot (local `.notion-cache/`)
+- `notion-cli snapshot` - cache workspace structure (pages, databases, schemas)
+- `notion-cli snapshot --if-stale 24` - refresh only if cache is older than 24 hours
+- `notion-cli workspace search <query>` - FTS5 search across cached pages, databases, properties
+- `notion-cli workspace pages` / `notion-cli workspace databases` - list cached items
+- `notion-cli workspace schema <database_id>` - cached database schema
+- `notion-cli cron --time 03:30` - nightly snapshot refresh (`--status`, `--remove`)
+- `notion-cli cron --hook` - Claude Code SessionStart hook running `notion-cli snapshot --if-stale 24`
+
+### Setup / Docs
+- `notion-cli install` / `notion-cli init` / `notion-cli doctor` / `notion-cli approve` / `notion-cli uninstall` / `notion-cli update`
+- `notion-cli docs --format skill` - print the agent skill (SKILL.md with frontmatter)
+- Other docs formats: `claude`, `agents`, `cursor`, `raw`
 
 ## Architecture
 - `src/index.ts` - Entry point, Commander program
@@ -88,10 +105,15 @@ CLI wrapper for the Notion API. Designed for LLM/AI agent consumption.
 - `src/commands/search.ts` - Search
 - `src/commands/files/` - File uploads (upload, get, list)
 - `src/commands/users/` - Users (me, list)
-- `src/commands/docs.ts` - Generate LLM instruction snippets
-- `src/commands/install.ts` - Global setup
+- `src/commands/docs.ts` - Generate LLM instruction snippets (incl. `--format skill`)
+- `src/commands/install.ts` - Global setup (skill + pointer + shell profile)
 - `src/commands/init.ts` - Per-project setup
-- `src/util/` - Pagination, stdin, datasource resolution, icon/cover builder, CLAUDE.md manipulation
+- `src/commands/snapshot.ts` / `workspace.ts` / `cron.ts` - Local cache: build, query, auto-refresh
+- `src/commands/doctor.ts` / `approve.ts` / `uninstall.ts` / `update.ts` - Health, permissions, lifecycle
+- `src/util/skill.ts` - Agent skill install/remove (`skills/notion-cli/SKILL.md` in a `.claude` dir)
+- `src/util/skill-doc.ts` - `SKILL_DOC`: the full command reference markdown
+- `src/util/claude-md.ts` - Marker-delimited CLAUDE.md upsert (pointer by default, full doc legacy)
+- `src/util/` - Also: pagination, stdin, datasource resolution, icon/cover builder, workspace DB
 
 ## Conventions
 - All commands support `--json` for structured output (auto-enabled when piped)

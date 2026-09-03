@@ -3,7 +3,9 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { readFileSync, writeFileSync, existsSync, appendFileSync } from "node:fs";
 import { createInterface } from "node:readline";
-import { upsertSection } from "../util/claude-md.js";
+import { upsertSection, getMarkedSnippet, hasFullDocSection } from "../util/claude-md.js";
+import { installSkill } from "../util/skill.js";
+import { keyLoadedFromDotEnv } from "../util/env.js";
 
 function prompt(question: string): Promise<string> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -17,17 +19,31 @@ function prompt(question: string): Promise<string> {
 
 export function installCommand(): Command {
   return new Command("install")
-    .description("Set up notion-cli globally (adds to ~/.claude/CLAUDE.md and shell profile)")
+    .description("Set up notion-cli globally (agent skill + CLAUDE.md pointer + shell profile)")
     .option("--skip-shell", "Skip shell profile modification")
     .option("--api-key <key>", "Notion API key (skips interactive prompt)")
-    .action(async (opts: { skipShell?: boolean; apiKey?: string }) => {
+    .option("--claude-md", "Inject the full command reference into CLAUDE.md instead of the skill + pointer (legacy)")
+    .option("--postinstall", "Internal: non-interactive refresh run by npm postinstall — preserves an existing --claude-md full-doc choice")
+    .action(async (opts: { skipShell?: boolean; apiKey?: string; claudeMd?: boolean; postinstall?: boolean }) => {
       const home = homedir();
       const results: string[] = [];
 
-      // 1. Upsert into global CLAUDE.md
+      // 1. Agent skill + CLAUDE.md pointer (or legacy full doc with --claude-md)
       const claudeMd = join(home, ".claude", "CLAUDE.md");
-      const claudeResult = upsertSection(claudeMd);
-      results.push(`~/.claude/CLAUDE.md: ${claudeResult}`);
+      if (opts.claudeMd || (opts.postinstall && hasFullDocSection(claudeMd))) {
+        // Explicit legacy choice, or postinstall refreshing a prior full-doc
+        // choice in place — never silently downgrade it to the pointer.
+        const claudeResult = upsertSection(claudeMd, getMarkedSnippet());
+        results.push(`~/.claude/CLAUDE.md: ${claudeResult} (full doc)`);
+        if (opts.postinstall) {
+          results.push("  (kept legacy full-doc CLAUDE.md injection; run `notion-cli install` to migrate to the skill format)");
+        }
+      } else {
+        const skillResult = installSkill(join(home, ".claude"));
+        results.push(`~/.claude/skills/notion-cli/SKILL.md: ${skillResult}`);
+        const claudeResult = upsertSection(claudeMd);
+        results.push(`~/.claude/CLAUDE.md: ${claudeResult} (pointer)`);
+      }
 
       // 2. Shell profile
       if (!opts.skipShell) {
@@ -35,17 +51,27 @@ export function installCommand(): Command {
         const profileName = shell.includes("zsh") ? ".zshrc" : ".bashrc";
         const profilePath = join(home, profileName);
 
-        // Get the API key
+        // Get the API key. A value that loadDotEnv() pulled from ./.env is
+        // project-local — never silently promote it to the global shell
+        // profile; only a genuinely exported variable skips the prompt.
         let apiKey = opts.apiKey || "";
         if (!apiKey) {
           const existingKey = process.env.NOTION_API_KEY;
-          if (existingKey && existingKey !== "your-api-key-here") {
+          const fromDotEnv = keyLoadedFromDotEnv();
+          if (existingKey && existingKey !== "your-api-key-here" && !fromDotEnv) {
             apiKey = existingKey;
           } else if (process.stdin.isTTY) {
             process.stdout.write("\n");
             process.stdout.write("  Get your API key at: https://www.notion.so/my-integrations\n");
             process.stdout.write("  Create an integration → copy the Internal Integration Secret\n\n");
-            apiKey = await prompt("  Enter your NOTION_API_KEY: ");
+            if (fromDotEnv && existingKey && existingKey !== "your-api-key-here") {
+              const answer = await prompt(
+                `  Found NOTION_API_KEY in ./.env (${existingKey.slice(0, 8)}...). Press Enter to use it for your shell profile, or paste a different key: `,
+              );
+              apiKey = answer || existingKey;
+            } else {
+              apiKey = await prompt("  Enter your NOTION_API_KEY: ");
+            }
           }
         }
 

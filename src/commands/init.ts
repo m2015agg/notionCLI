@@ -3,26 +3,30 @@ import { join } from "node:path";
 import { readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { upsertSection } from "../util/claude-md.js";
+import { installSkill } from "../util/skill.js";
 import { WALKTHROUGH_TEMPLATE } from "../templates/walkthrough.js";
 
 export function initCommand(): Command {
   return new Command("init")
-    .description("Initialize notion-cli in the current project (CLAUDE.md + .env + .gitignore + skill + permissions)")
+    .description("Initialize notion-cli in the current project (agent skill + CLAUDE.md pointer + .env + .gitignore + permissions + snapshot)")
     .action(() => {
       const cwd = process.cwd();
       const results: string[] = [];
 
-      // 1. Upsert into project CLAUDE.md files
+      // 1. Install the agent skill, then point CLAUDE.md files at it
+      const dotClaudeDir = join(cwd, ".claude");
+      const skillResult = installSkill(dotClaudeDir);
+      results.push(`.claude/skills/notion-cli/SKILL.md: ${skillResult}`);
+
       const claudeMd = join(cwd, "CLAUDE.md");
       const claudeResult = upsertSection(claudeMd);
-      results.push(`CLAUDE.md: ${claudeResult}`);
+      results.push(`CLAUDE.md: ${claudeResult} (pointer)`);
 
       // Also update .claude/CLAUDE.md if it exists
-      const dotClaudeDir = join(cwd, ".claude");
       const dotClaudeMd = join(dotClaudeDir, "CLAUDE.md");
-      if (existsSync(dotClaudeDir)) {
+      if (existsSync(dotClaudeMd)) {
         const dotResult = upsertSection(dotClaudeMd);
-        results.push(`.claude/CLAUDE.md: ${dotResult}`);
+        results.push(`.claude/CLAUDE.md: ${dotResult} (pointer)`);
       }
 
       // 2. .env

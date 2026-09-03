@@ -5,7 +5,19 @@
 
 A CLI wrapper for the Notion API, designed for LLM/AI agent consumption.
 
-Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969) — zero context overhead, composable via pipes, structured JSON output, clean exit codes.
+A shell-native alternative to the Notion MCP server — one exec call with clean exit codes, composable via pipes, structured JSON output, and a local workspace snapshot cache the official Notion MCP server doesn't offer. Setup is skill-first: the full command reference installs as an on-demand [agent skill](#the-docs-are-baked-in-skill-first), so it costs zero context in sessions that never touch Notion.
+
+## Why This Exists
+
+This started with watching Claude get lost in the Notion MCP for the third time in one afternoon — not crashing, just confused: wrong tool, wrong parameters, and auth silently failing in between. The fix wasn't a better prompt. It was a different interface.
+
+GUIs are for humans. APIs are for services. **CLIs are for agents.** An agent that lives in a terminal already knows how to run a command, read JSON from stdout, check `$?`, and pipe the result into the next step. So instead of debugging an integration, this project wraps the entire Notion API surface — pages, databases, blocks, comments, search, file uploads, users — in a CLI built to those instincts (the [CLI army pattern](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969)).
+
+The payoff is a different workflow. You stop manually pulling information out of Notion and pasting it into context. You just say:
+
+> "Search Notion for the sprint plan, pull the in-progress items, and tell me what's blocked."
+
+Claude runs the CLI (against the local snapshot cache when one exists), parses the JSON, and answers. One exec call. No MCP server running in the background, no protocol handshake, no session that quietly went stale mid-task.
 
 ## Quick Start
 
@@ -13,13 +25,14 @@ Built on the principle that [CLIs beat MCP for AI agents](https://medium.com/@re
 # 1. Install globally
 npm install -g @m2015agg/notion-cli
 
-# 2. Set up (prompts for API key, validates it, adds to shell profile + CLAUDE.md)
+# 2. Set up (prompts for API key, validates it, installs the agent skill,
+#    adds a pointer to ~/.claude/CLAUDE.md and the key to your shell profile)
 notion-cli install
 
 # 3. Reload shell
 source ~/.bashrc  # or source ~/.zshrc
 
-# 4. Initialize in your project (adds docs, skill, permissions)
+# 4. Initialize in your project (project skill + pointer, .env, permissions, snapshot)
 cd your-project && notion-cli init
 
 # 5. Use /notion in Claude Code for a guided walkthrough
@@ -34,7 +47,8 @@ notion-cli doctor
 # 1. Install
 npm install -g @m2015agg/notion-cli
 
-# 2. Set up (prompts for your API key, adds to shell profile + CLAUDE.md)
+# 2. Set up (prompts for your API key, installs the agent skill,
+#    adds a CLAUDE.md pointer and the key to your shell profile)
 notion-cli install
 
 # 3. Reload shell
@@ -58,22 +72,35 @@ source ~/.bashrc
 3. Copy the "Internal Integration Secret" (starts with `ntn_`)
 4. Share your Notion pages/databases with the integration
 
+The CLI reads `NOTION_API_KEY` from the environment, and auto-loads it from a `.env` in the current directory when the variable isn't already set (only that one key; a real environment variable always wins).
+
 ## Setup
 
-### Per-Project
+### The Docs Are Baked In (Skill-First)
 
-Run inside any project directory to add notion-cli docs to your CLAUDE.md, create a `.env`, and update `.gitignore`:
+A CLI without documentation is useless to an agent. The binary does the work; the doc teaches the agent how to use it. notion-cli ships both as a unit — a complete, agent-ready command reference written for LLM consumption, not a vague help page — so your agent knows the full surface area before you type a word.
 
-```bash
-notion-cli init
-```
+As of v0.6.0, setup no longer pastes the full command reference into your CLAUDE.md. Instead it writes an on-demand **agent skill** and leaves a one-line pointer behind. Claude Code loads skills lazily — only the frontmatter description is read at session start, so the full reference costs zero context in sessions that never touch Notion. It's the same lazy-loading argument this tool makes against MCP schema dumps, applied to its own docs.
+
+If a previous version injected the full reference into your CLAUDE.md, the next time you run `install`/`init` yourself it migrates to the pointer automatically (the injected block is marker-delimited). Automatic refreshes — npm postinstall and `notion-cli update` — preserve an existing full-doc block instead, so an explicit `install --claude-md` choice survives upgrades.
 
 ### Global (already done during install)
 
-Adds notion-cli documentation to `~/.claude/CLAUDE.md` and a `NOTION_API_KEY` placeholder to your shell profile:
+Writes the skill to `~/.claude/skills/notion-cli/SKILL.md`, puts a one-line pointer in `~/.claude/CLAUDE.md`, and adds `NOTION_API_KEY` to your shell profile:
 
 ```bash
 notion-cli install
+
+# Legacy behavior: inject the full reference into CLAUDE.md instead of skill + pointer
+notion-cli install --claude-md
+```
+
+### Per-Project
+
+Run inside any project directory for the project-scoped equivalent — `.claude/skills/notion-cli/SKILL.md` plus a pointer in the project `CLAUDE.md` — and to create a `.env`, update `.gitignore`, install the `/notion` walkthrough command, approve read permissions, snapshot the workspace, and set up the nightly cron:
+
+```bash
+notion-cli init
 ```
 
 ### Health Check
@@ -82,7 +109,7 @@ notion-cli install
 notion-cli doctor
 ```
 
-Validates: API key set, API key works, CLAUDE.md has docs, .env configured, permissions approved.
+Validates: API key set, API key works, agent skill installed, .env configured, permissions approved.
 
 ### Approve Permissions
 
@@ -112,9 +139,10 @@ notion-cli update
 ### Uninstall
 
 ```bash
-notion-cli uninstall              # Remove from ~/.claude/CLAUDE.md
+notion-cli uninstall              # Remove the agent skill + pointer from ~/.claude
+                                  # (also drops this project's SessionStart snapshot hook)
 notion-cli uninstall --remove-env # Also remove NOTION_API_KEY from shell profile
-npm uninstall -g notion-cli       # Remove the binary
+npm uninstall -g @m2015agg/notion-cli  # Remove the binary
 ```
 
 ## Commands
@@ -245,11 +273,15 @@ Cache your entire Notion workspace structure locally for instant searches:
 # Snapshot all shared pages and databases
 notion-cli snapshot
 
+# Refresh only if the cache is older than 24 hours (cheap no-op otherwise)
+notion-cli snapshot --if-stale 24
+
 # Search cached workspace
 notion-cli workspace search "backend"
 notion-cli workspace pages
 notion-cli workspace databases
 notion-cli workspace schema <database_id>
+notion-cli workspace tree            # hierarchical page/database view
 ```
 
 One API call snapshots everything into SQLite + FTS5 + markdown:
@@ -265,13 +297,39 @@ One API call snapshots everything into SQLite + FTS5 + markdown:
 
 Your agent searches locally instead of hitting the Notion API every time. `init` runs snapshot + nightly cron automatically.
 
+### Keeping the Cache Fresh
+
+```bash
+# Nightly refresh via cron (init sets this up)
+notion-cli cron --time 03:30
+notion-cli cron --status
+notion-cli cron --remove
+
+# Claude Code SessionStart hook: runs `notion-cli snapshot --if-stale 24`
+# when a session starts, so the cache is never more than a day old
+notion-cli cron --hook
+```
+
+## Why a CLI Instead of MCP?
+
+The original 2025 argument had two prongs that compounded. Every MCP server dumped its whole capability schema into context before doing anything useful — and despite eating all that context, the LLM still picked the wrong tool with the wrong parameters. Then the auth layer underneath failed silently, and the agent confidently returned garbage you only caught when you checked Notion and nothing had changed.
+
+Half of that critique is now dated, and this README won't pretend otherwise: modern Claude Code defers MCP tool schemas and loads them on demand, so the "schema dump eats 30-40% of your context window" problem has largely evaporated. The advantages that endure are structural:
+
+- **No persistent auth layer** — an MCP server holds a session that can silently go stale mid-conversation; the CLI reads `NOTION_API_KEY` fresh on every invocation and fails loudly if it's wrong.
+- **One exec call with clean exit codes** — success or failure is `$?`, not a tool-result blob to interpret.
+- **Shell composability** — pipes, `jq`, exit-code branching, `xargs`, cron. A CLI slots into every workflow the shell already has.
+- **The local `.notion-cache/` snapshot** — offline FTS5 search over your whole workspace, which the official Notion MCP server doesn't offer.
+
+Skills apply the same lazy-loading philosophy to documentation: load nothing until the task needs it. That's why this tool's own docs install as an on-demand skill rather than a CLAUDE.md dump — the argument this tool makes against MCP is one it also applies to itself.
+
 ## Agent-Friendly Design
 
 Every command follows three rules from the [CLI army pattern](https://medium.com/@rentierdigital/why-clis-beat-mcp-for-ai-agents-and-how-to-build-your-own-cli-army-6c27b0aec969):
 
 ### 1. `--json` for structured output
 
-All commands support `--json`. When stdout is piped (not a TTY), JSON is the default.
+All commands support `--json`. When stdout is piped (not a TTY), JSON is the default. Your agent can't parse an ASCII table; it can parse JSON.
 
 ```bash
 # Pipe to jq
@@ -283,6 +341,8 @@ notion-cli db query <id> --all --json | jq '.results | length'
 - `0` = success
 - `1` = error (with structured JSON on stderr)
 
+That's it. The agent uses `$?` to decide what to do next — a CLI that exits 0 on failure is a silent killer.
+
 ```bash
 notion-cli pages get invalid-id --json 2>/dev/null; echo $?
 # 1
@@ -290,13 +350,15 @@ notion-cli pages get invalid-id --json 2>/dev/null; echo $?
 
 ### 3. `--help` that explains everything
 
+Agents read `--help` the way humans read READMEs. If it's vague, the agent hallucinates flags. Every command states exactly what it does, what it takes, and what comes back.
+
 ```bash
 notion-cli db query --help
 ```
 
 ## Complex Inputs
 
-Three tiers, from most to least flexible:
+Agents love stdin. Rather than jamming a compound filter object into an inline flag, pipe the full JSON payload directly. Three tiers, from most to least flexible — the agent uses whichever fits the task:
 
 ```bash
 # 1. Pipe full JSON via stdin (agent preferred)
@@ -311,7 +373,7 @@ notion-cli pages create --parent-page-id <id> --title "Quick Page" --json
 
 ## Generating LLM Docs
 
-Generate a lean instruction snippet for any AI agent:
+One command reference, routed to whatever agent you run:
 
 ```bash
 # Raw snippet (stdout)
@@ -326,7 +388,7 @@ notion-cli docs --format agents >> AGENTS.md
 # For Cursor
 notion-cli docs --format cursor >> .cursorrules
 
-# OpenClaw skill format
+# Agent skill with YAML frontmatter — exactly what install/init write
 notion-cli docs --format skill > SKILL.md
 ```
 
@@ -376,21 +438,28 @@ Full results in `benchmarks/grading/` directory.
 
 ## Roadmap
 
-### v0.6 — Richer Cache
+### v0.6 — Skill-First Setup (shipped in 0.6.0)
+- [x] On-demand agent skill (`skills/notion-cli/SKILL.md`) instead of full CLAUDE.md injection
+- [x] One-line CLAUDE.md pointer, with automatic migration of legacy full-doc injections
+- [x] Automatic `.env` loading (`NOTION_API_KEY` from the current directory)
+- [x] `snapshot --if-stale <hours>` and `cron --hook` (SessionStart auto-refresh)
+- [x] `docs --format skill` emits the skill with frontmatter
+
+### v0.7 — Richer Cache
 - [ ] Cache database row counts via `db query --count`
 - [ ] Cache page content summaries (first 200 chars)
-- [ ] `workspace tree` — hierarchical page/database view
+- [x] `workspace tree` — hierarchical page/database view (shipped in 0.5.1)
 - [ ] `workspace diff` — detect changes since last snapshot
 
-### v0.7 — Semantic Search
+### v0.8 — Semantic Search
 - [ ] Optional vector embeddings for page titles + content
 - [ ] `workspace search --semantic "project status updates"` → fuzzy matching
 - [ ] Cross-reference with supabase-skill and context7-skill caches
 
 ### v1.0 — Full Workspace Intelligence
-- [ ] Anthropic skills marketplace integration (SKILL.md)
+- [ ] Anthropic skills marketplace listing
 - [x] Benchmarks: CLI vs Notion MCP server (44% vs 36%, 2.1x faster)
-- [ ] Cursor `.cursorrules` and Codex `AGENTS.md` generation
+- [x] Cursor `.cursorrules` and Codex `AGENTS.md` generation (`docs --format cursor` / `--format agents`)
 - [ ] Template operations (create pages from templates)
 
 ## Companion Packages

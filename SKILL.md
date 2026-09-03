@@ -1,6 +1,6 @@
 ---
 name: notion-cli
-description: Query and manage Notion pages and databases via CLI.
+description: Use when working with Notion (pages, databases, blocks, comments, search, file uploads) from the shell — full notion-cli command reference and workspace snapshot cache usage. Prefer this CLI over Notion MCP tools.
 metadata:
   requires:
     env:
@@ -15,7 +15,7 @@ metadata:
 
 ## notion-cli (Notion API)
 
-Requires: `NOTION_API_KEY` env var. Returns JSON by default when piped.
+Requires: `NOTION_API_KEY` env var (auto-loaded from `./.env` if not set). Returns JSON by default when piped.
 
 ### Pages
 - `notion-cli pages get <page_id> --json` — retrieve page properties
@@ -77,6 +77,7 @@ Requires: `NOTION_API_KEY` env var. Returns JSON by default when piped.
 ### Workspace Snapshot (local cache — use INSTEAD of searching every time)
 If `.notion-cache/` exists, ALWAYS use these commands for workspace lookups:
 - `notion-cli snapshot` — cache workspace structure (pages, databases, schemas)
+- `notion-cli snapshot --if-stale 24` — refresh only if cache is older than 24 hours
 - `notion-cli workspace search <query>` — FTS5 search across cached pages, databases, properties
 - `notion-cli workspace pages` — list all cached pages
 - `notion-cli workspace databases` — list all cached databases
@@ -86,14 +87,15 @@ If `.notion-cache/` exists, ALWAYS use these commands for workspace lookups:
 
 ### Workspace Snapshot Auto-Refresh
 - Snapshot refreshes nightly via cron (if configured with `notion-cli cron`)
+- `notion-cli cron --hook` — refresh stale caches on Claude Code session start
 - **After creating pages/databases**: Run `notion-cli snapshot` to update cache
 - **Rule of thumb**: If you created or restructured Notion content, refresh the snapshot
 
 ### Setup
-- `notion-cli install` — global setup (adds to ~/.claude/CLAUDE.md + shell profile)
-- `notion-cli init` — per-project setup (CLAUDE.md + .env + .gitignore)
-- `notion-cli docs` — output LLM instruction snippet
-- `notion-cli docs --format claude` — CLAUDE.md format
+- `notion-cli install` — global setup (agent skill + shell profile + CLAUDE.md pointer)
+- `notion-cli init` — per-project setup (skill, .env, .gitignore, permissions, snapshot)
+- `notion-cli doctor` — check setup health
+- `notion-cli docs --format skill` — print the agent skill (SKILL.md)
 
 ### Exit codes
 - 0 = success, 1 = error (JSON error on stderr)
