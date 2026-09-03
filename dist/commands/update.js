@@ -56,9 +56,10 @@ export function updateCommand() {
                 timeout: 60000,
             });
             process.stdout.write("\nUpdate complete!\n");
-            process.stdout.write("\n  Run `notion-cli init` in your project directories to update:\n");
-            process.stdout.write("    - CLAUDE.md skill doc\n");
-            process.stdout.write("    - /notion walkthrough skill\n");
+            process.stdout.write("\n  The global agent skill (~/.claude/skills/notion-cli/) refreshes automatically (postinstall).\n");
+            process.stdout.write("\n  Run `notion-cli init` in your project directories to refresh:\n");
+            process.stdout.write("    - project agent skill (.claude/skills/notion-cli/)\n");
+            process.stdout.write("    - /notion walkthrough command\n");
             process.stdout.write("    - Claude Code permissions\n\n");
         }
         catch {

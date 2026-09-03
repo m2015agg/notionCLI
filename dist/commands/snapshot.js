@@ -1,7 +1,8 @@
 import { Command } from "commander";
 import { join } from "node:path";
-import { mkdirSync, writeFileSync, existsSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, existsSync, rmSync, statSync } from "node:fs";
 import { getClient, getDataSource } from "../client.js";
+import { outputError } from "../output.js";
 import { openDb, clearData, setMetadata, insertPages, insertDatabases, } from "../util/workspace-db.js";
 function write(msg) {
     process.stdout.write(msg);
@@ -23,11 +24,45 @@ function getIcon(item) {
         return icon.emoji || null;
     return null;
 }
+/** Newest mtime (ms) among the cache's index.md and workspace.db, or null if neither exists. */
+function newestCacheMtimeMs(outDir) {
+    let newest = null;
+    for (const file of ["index.md", "workspace.db"]) {
+        try {
+            const { mtimeMs } = statSync(join(outDir, file));
+            if (newest === null || mtimeMs > newest)
+                newest = mtimeMs;
+        }
+        catch {
+            // File missing — ignore
+        }
+    }
+    return newest;
+}
 export function snapshotCommand() {
     return new Command("snapshot")
         .description("Snapshot Notion workspace structure to local .notion-cache/ for fast lookups")
         .option("--output <dir>", "Output directory", ".notion-cache")
+        .option("--if-stale <hours>", "Skip if the cache is younger than this many hours")
         .action(async (opts) => {
+        if (opts.ifStale !== undefined) {
+            const threshold = Number(opts.ifStale);
+            if (Number.isNaN(threshold) || threshold <= 0) {
+                outputError({
+                    code: "invalid_argument",
+                    message: `--if-stale must be a positive number of hours (got "${opts.ifStale}")`,
+                }, true);
+                process.exit(1);
+            }
+            const newest = newestCacheMtimeMs(join(process.cwd(), opts.output));
+            if (newest !== null) {
+                const ageHours = (Date.now() - newest) / 3_600_000;
+                if (ageHours < threshold) {
+                    write(`\n  Cache is fresh (${ageHours.toFixed(1)}h < ${threshold}h) — skipping snapshot.\n\n`);
+                    return;
+                }
+            }
+        }
         write("\n  Snapshotting Notion workspace...\n");
         const client = getClient();
         // Paginate through all shared pages

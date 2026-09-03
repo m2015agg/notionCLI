@@ -20,6 +20,7 @@ import { updateCommand } from "./commands/update.js";
 import { snapshotCommand } from "./commands/snapshot.js";
 import { workspaceCommand } from "./commands/workspace.js";
 import { cronCommand } from "./commands/cron.js";
+import { loadDotEnv } from "./util/env.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
 const program = new Command();
@@ -45,5 +46,6 @@ program.addCommand(updateCommand());
 program.addCommand(snapshotCommand());
 program.addCommand(workspaceCommand());
 program.addCommand(cronCommand());
+loadDotEnv();
 program.parse();
 //# sourceMappingURL=index.js.map

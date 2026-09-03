@@ -1,6 +1,6 @@
 {
   "name": "@m2015agg/notion-cli",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "type": "module",
   "description": "CLI wrapper for the Notion API, designed for LLM/AI agent consumption",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "link": "npm run build && npm link",
-    "postinstall": "node dist/index.js install --skip-shell 2>/dev/null || true",
+    "postinstall": "node dist/index.js install --skip-shell --postinstall 2>/dev/null || true",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
